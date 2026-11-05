@@ -23,7 +23,7 @@ If the Windows sandbox reports `uv_os_get_passwd` from the TypeScript loader, us
 - [Demo walkthrough](docs/demo-walkthrough.md): follow a real transaction through all roles.
 - [User guide](docs/user-guide.md): listings, bulk orders, offline submissions, and delivery.
 - [Developer guide](docs/developer-guide.md): commands, source layout, contracts, and tests.
-- [Architecture](docs/architecture.md), [API specification](contracts/openapi.yaml), [database](docs/database.md).
+- [Architecture](docs/architecture.md), [API reference](docs/api-reference.md), [API specification](contracts/openapi.yaml), [database](docs/database.md).
 - [Admin runbook](docs/admin-runbook.md), [operations](docs/operations.md), [security review](docs/security-report.md).
 - [Delivery status](docs/delivery-status.md), [test report](docs/test-report.md), [integration decisions](docs/integration-log.md).
 

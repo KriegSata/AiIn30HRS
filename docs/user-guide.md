@@ -2,6 +2,8 @@
 
 Choose the account for your organization. Your role determines which actions you can perform; changing screens cannot grant another role's permissions.
 
+The menu keeps frequent tasks visible. Open **Business tools** for the other screens, including reports and supply agreements. **My organization** and help are at the bottom. On a phone, use the menu button to open or close navigation.
+
 ```mermaid
 flowchart LR
   A[Supplier records a harvest or catch] --> B[Buyer orders or requests a quote]
@@ -24,7 +26,9 @@ Orders awaiting confirmation reserve stock for 30 minutes. Confirmed orders keep
 
 ## Buyers
 
-Search the marketplace, inspect the source lot, and check the minimum quantity and delivery date. Orders contain goods from one supplier. For negotiated bulk supply, create a request for quote and accept a supplier's valid offer.
+Start with **Category** and **Location**, or search by product or supplier. Location means the supplier's listed source location. Open **More filters** for harvest/catch age, chilled or frozen handling, price, and minimum order size. Choose kilograms or crates before comparing prices or quantities. Active choices appear below the controls; remove one or choose **Reset all filters**. If more products are available, **Load more products** expands the catalog and its location choices.
+
+Open a product, inspect the source lot, and check the minimum quantity and delivery date. Orders contain goods from one supplier. For negotiated bulk supply, create a request for quote and accept a supplier's valid offer.
 
 The order screen shows whether an order is awaiting confirmation, preparing, travelling, or delivered. Sandbox payment buttons simulate holding and releasing funds; no payment is charged. Review delivered goods before releasing simulated funds and acknowledging delivery. Open a dispute if a held-payment order needs investigation.
 

@@ -5,7 +5,7 @@
       "C:\\Users\\Kael\\AiIn30HRS\\node_modules\\@playwright\\test\\cli.js",
       "test",
       "--grep",
-      "category and supplier|browser receives",
+      "landing pages|buyer search|supplier publishes",
       "--workers=1"
     ],
     "configFile": "C:\\Users\\Kael\\AiIn30HRS\\playwright.config.ts",
@@ -119,42 +119,8 @@
       "line": 0,
       "specs": [
         {
-          "title": "browser receives distinct authorized live events and refreshes order status",
+          "title": "login and five role landing pages have no automated WCAG AA violations",
           "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 150000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [
-                {
-                  "workerIndex": 0,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 24679,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-11-05T03:38:39.036Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "170e8a9d719db4caeb1d-79dd4c6fab3f14fe475a",
-          "file": "marketplace.spec.ts",
-          "line": 336,
-          "column": 5
-        },
-        {
-          "title": "category and supplier location combine, optional filters use explicit units, reset restores results",
-          "ok": false,
           "tags": [],
           "tests": [
             {
@@ -167,58 +133,143 @@
                 {
                   "workerIndex": 0,
                   "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 22249,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-05T03:51:55.847Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "http-statuses",
+                      "contentType": "application/json",
+                      "body": "W10="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "170e8a9d719db4caeb1d-1a61c282b2bc88b34a64",
+          "file": "marketplace.spec.ts",
+          "line": 86,
+          "column": 5
+        },
+        {
+          "title": "buyer search, cold filters, source details, keyboard dialog and mobile layout",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6937,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-05T03:52:18.937Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "http-statuses",
+                      "contentType": "application/json",
+                      "body": "W10="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "170e8a9d719db4caeb1d-3900368f1ba1bc077386",
+          "file": "marketplace.spec.ts",
+          "line": 100,
+          "column": 5
+        },
+        {
+          "title": "supplier publishes and edits a lot; buyer orders; supplier fulfills; carrier delivers; buyer settles",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 150000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
                   "status": "failed",
-                  "duration": 2810,
+                  "duration": 31444,
                   "error": {
-                    "message": "Error: locator.click: Error: strict mode violation: getByRole('button', { name: 'Reset all filters', exact: true }) resolved to 2 elements:\n    1) <button class=\"text-button reset-filters\">Reset all filters</button> aka getByLabel('Active filters').getByRole('button', { name: 'Reset all filters' })\n    2) <button class=\"button secondary\">Reset all filters</button> aka getByRole('button', { name: 'Reset all filters' }).nth(1)\n\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Reset all filters', exact: true })\u001b[22m\n",
-                    "stack": "Error: locator.click: Error: strict mode violation: getByRole('button', { name: 'Reset all filters', exact: true }) resolved to 2 elements:\n    1) <button class=\"text-button reset-filters\">Reset all filters</button> aka getByLabel('Active filters').getByRole('button', { name: 'Reset all filters' })\n    2) <button class=\"button secondary\">Reset all filters</button> aka getByRole('button', { name: 'Reset all filters' }).nth(1)\n\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Reset all filters', exact: true })\u001b[22m\n\n    at C:\\Users\\Kael\\AiIn30HRS\\tests\\e2e\\marketplace.spec.ts:366:78",
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.order-card').filter({ hasText: 'HL-E4966929' })\nExpected substring: \u001b[32m\"held\"\u001b[39m\nReceived string:    \u001b[31m\"HL-E4966929Nov 5, 2026 · Cordillera Growers Cooperativeready for pickupunpaidQA-1793850746353-t95r1.000 kg · Delivery by Nov 6, 2026Quezon City, Metro Manila₱96Order totalView order & invoice Pay in sandboxCancel order\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('.order-card').filter({ hasText: 'HL-E4966929' }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('.order-card').filter({ hasText: 'HL-E4966929' })\u001b[22m\n\u001b[2m    32 × locator resolved to <article class=\"order-card\">…</article>\u001b[22m\n\u001b[2m       - unexpected value \"HL-E4966929Nov 5, 2026 · Cordillera Growers Cooperativeready for pickupunpaidQA-1793850746353-t95r1.000 kg · Delivery by Nov 6, 2026Quezon City, Metro Manila₱96Order totalView order & invoice Pay in sandboxCancel order\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.order-card').filter({ hasText: 'HL-E4966929' })\nExpected substring: \u001b[32m\"held\"\u001b[39m\nReceived string:    \u001b[31m\"HL-E4966929Nov 5, 2026 · Cordillera Growers Cooperativeready for pickupunpaidQA-1793850746353-t95r1.000 kg · Delivery by Nov 6, 2026Quezon City, Metro Manila₱96Order totalView order & invoice Pay in sandboxCancel order\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('.order-card').filter({ hasText: 'HL-E4966929' }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('.order-card').filter({ hasText: 'HL-E4966929' })\u001b[22m\n\u001b[2m    32 × locator resolved to <article class=\"order-card\">…</article>\u001b[22m\n\u001b[2m       - unexpected value \"HL-E4966929Nov 5, 2026 · Cordillera Growers Cooperativeready for pickupunpaidQA-1793850746353-t95r1.000 kg · Delivery by Nov 6, 2026Quezon City, Metro Manila₱96Order totalView order & invoice Pay in sandboxCancel order\"\u001b[22m\n\n    at C:\\Users\\Kael\\AiIn30HRS\\tests\\e2e\\marketplace.spec.ts:184:22",
                     "location": {
                       "file": "C:\\Users\\Kael\\AiIn30HRS\\tests\\e2e\\marketplace.spec.ts",
-                      "column": 78,
-                      "line": 366
+                      "column": 22,
+                      "line": 184
                     },
-                    "snippet": "  364 |   await page.getByRole('combobox', { name: 'Location', exact: true }).selectOption({ label: 'Benguet, Cordillera' });\n  365 |   await expect(page.locator('.product-card')).toHaveCount(0);\n> 366 |   await page.getByRole('button', { name: 'Reset all filters', exact: true }).click();\n      |                                                                              ^\n  367 |   await expect(page.getByRole('button', { name: 'Yellowfin tuna', exact: true })).toBeVisible();\n  368 |   await page.getByRole('combobox', { name: 'Category', exact: true }).selectOption('seafood');\n  369 |   await page.getByRole('combobox', { name: 'Location', exact: true }).selectOption({ label: 'General Santos, South Cotabato' });"
+                    "snippet": "  182 |   const heldResult = await heldResponse;\n  183 |   expect(heldResult.ok(), `Sandbox payment response: ${heldResult.status()} ${await heldResult.text()}`).toBe(true);\n> 184 |   await expect(card).toContainText('held');\n      |                      ^\n  185 |   await logout(page);\n  186 |   await login(page, 'logistics');\n  187 |   const shipment = page.locator('.shipment-card').filter({ hasText: order.orderNumber });"
                   },
                   "errors": [
                     {
                       "location": {
                         "file": "C:\\Users\\Kael\\AiIn30HRS\\tests\\e2e\\marketplace.spec.ts",
-                        "column": 78,
-                        "line": 366
+                        "column": 22,
+                        "line": 184
                       },
-                      "message": "Error: locator.click: Error: strict mode violation: getByRole('button', { name: 'Reset all filters', exact: true }) resolved to 2 elements:\n    1) <button class=\"text-button reset-filters\">Reset all filters</button> aka getByLabel('Active filters').getByRole('button', { name: 'Reset all filters' })\n    2) <button class=\"button secondary\">Reset all filters</button> aka getByRole('button', { name: 'Reset all filters' }).nth(1)\n\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Reset all filters', exact: true })\u001b[22m\n\n\n  364 |   await page.getByRole('combobox', { name: 'Location', exact: true }).selectOption({ label: 'Benguet, Cordillera' });\n  365 |   await expect(page.locator('.product-card')).toHaveCount(0);\n> 366 |   await page.getByRole('button', { name: 'Reset all filters', exact: true }).click();\n      |                                                                              ^\n  367 |   await expect(page.getByRole('button', { name: 'Yellowfin tuna', exact: true })).toBeVisible();\n  368 |   await page.getByRole('combobox', { name: 'Category', exact: true }).selectOption('seafood');\n  369 |   await page.getByRole('combobox', { name: 'Location', exact: true }).selectOption({ label: 'General Santos, South Cotabato' });\n    at C:\\Users\\Kael\\AiIn30HRS\\tests\\e2e\\marketplace.spec.ts:366:78"
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.order-card').filter({ hasText: 'HL-E4966929' })\nExpected substring: \u001b[32m\"held\"\u001b[39m\nReceived string:    \u001b[31m\"HL-E4966929Nov 5, 2026 · Cordillera Growers Cooperativeready for pickupunpaidQA-1793850746353-t95r1.000 kg · Delivery by Nov 6, 2026Quezon City, Metro Manila₱96Order totalView order & invoice Pay in sandboxCancel order\"\u001b[39m\nTimeout: 15000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('.order-card').filter({ hasText: 'HL-E4966929' }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for locator('.order-card').filter({ hasText: 'HL-E4966929' })\u001b[22m\n\u001b[2m    32 × locator resolved to <article class=\"order-card\">…</article>\u001b[22m\n\u001b[2m       - unexpected value \"HL-E4966929Nov 5, 2026 · Cordillera Growers Cooperativeready for pickupunpaidQA-1793850746353-t95r1.000 kg · Delivery by Nov 6, 2026Quezon City, Metro Manila₱96Order totalView order & invoice Pay in sandboxCancel order\"\u001b[22m\n\n\n  182 |   const heldResult = await heldResponse;\n  183 |   expect(heldResult.ok(), `Sandbox payment response: ${heldResult.status()} ${await heldResult.text()}`).toBe(true);\n> 184 |   await expect(card).toContainText('held');\n      |                      ^\n  185 |   await logout(page);\n  186 |   await login(page, 'logistics');\n  187 |   const shipment = page.locator('.shipment-card').filter({ hasText: order.orderNumber });\n    at C:\\Users\\Kael\\AiIn30HRS\\tests\\e2e\\marketplace.spec.ts:184:22"
                     }
                   ],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-11-05T03:39:04.795Z",
+                  "startTime": "2026-11-05T03:52:25.924Z",
                   "annotations": [],
                   "attachments": [
                     {
+                      "name": "http-statuses",
+                      "contentType": "application/json",
+                      "body": "W10="
+                    },
+                    {
                       "name": "screenshot",
                       "contentType": "image/png",
-                      "path": "C:\\Users\\Kael\\AiIn30HRS\\test-results\\marketplace-category-and-s-122f2-nits-reset-restores-results\\test-failed-1.png"
+                      "path": "C:\\Users\\Kael\\AiIn30HRS\\test-results\\marketplace-supplier-publi-f38bd-rier-delivers-buyer-settles\\test-failed-1.png"
                     },
                     {
                       "name": "error-context",
                       "contentType": "text/markdown",
-                      "path": "C:\\Users\\Kael\\AiIn30HRS\\test-results\\marketplace-category-and-s-122f2-nits-reset-restores-results\\error-context.md"
+                      "path": "C:\\Users\\Kael\\AiIn30HRS\\test-results\\marketplace-supplier-publi-f38bd-rier-delivers-buyer-settles\\error-context.md"
                     }
                   ],
                   "errorLocation": {
                     "file": "C:\\Users\\Kael\\AiIn30HRS\\tests\\e2e\\marketplace.spec.ts",
-                    "column": 78,
-                    "line": 366
+                    "column": 22,
+                    "line": 184
                   }
                 }
               ],
               "status": "unexpected"
             }
           ],
-          "id": "170e8a9d719db4caeb1d-0b4bf47c404e8aa23db7",
+          "id": "170e8a9d719db4caeb1d-9310d9f1e6dafd66d61f",
           "file": "marketplace.spec.ts",
-          "line": 358,
+          "line": 129,
           "column": 5
         }
       ]
@@ -226,9 +277,9 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-11-05T03:38:33.043Z",
-    "duration": 36553.775,
-    "expected": 1,
+    "startTime": "2026-11-05T03:51:54.246Z",
+    "duration": 63621.741,
+    "expected": 2,
     "skipped": 0,
     "unexpected": 1,
     "flaky": 0

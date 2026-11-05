@@ -50,3 +50,11 @@ SecurityAgent found that reconnect could use a supplier price changed after the 
 3. DatabaseAgent, BackendAgent, FrontendAgent: integrated MVP after freeze.
 4. DevOpsAgent, QAAndTestAgent, DocumentationAgent: deployment, independent validation, and verified operating guides.
 5. SecurityAgent: implementation review; Principal: remediation and evidence-based phase decisions.
+
+## Menu revision and integration review
+
+The user requested a simpler menu with category/location choices and named Superpowers and Ponytail. Principal read the upstream skills and used the existing delegated approval authority for the [design](superpowers/specs/2026-11-05-marketplace-menu-design.md) and [plan](superpowers/plans/2026-11-05-marketplace-menu.md). FrontendAgent implemented the revision; QAAndTestAgent independently reviewed it; Principal owns browser acceptance. No global hooks or plugin installation was needed to apply those instructions in this session.
+
+The marketplace now leads with search, catalog categories, and actual supplier locations. Optional filters compare explicit units; secondary role destinations use a disclosure. Promotional hero/metrics and sidebar filler were removed. Review corrected label/name mismatch, hidden mobile keyboard targets, and responsive list columns. Principal added paginated catalog loading and visible loaded-scope feedback instead of silently truncating location choices at 100 products.
+
+Live-update investigation traced browser failure to two proxy boundaries: a 308 slash redirect during WebSocket upgrade, then a wildcard rewrite dropping the required trailing slash. The final explicit `/socket.io/` destination and disabled slash redirect pass the real-browser distinct-event regression. Event bursts share a refresh. Backend resource authorization remains unchanged.

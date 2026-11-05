@@ -1,10 +1,12 @@
 {
-  "executedAt": "2026-11-05",
-  "status": "blocked",
+  "executedAt": "2026-11-05T03:48:00.071Z",
+  "status": "passed",
   "command": "npm run test:native",
-  "stage": "native server startup",
-  "reason": "Windows sandbox: pg_ctl could not create restricted token (87), could not start server (3)",
-  "applicationAssertionsExecuted": 0,
-  "earlierPassingEvidence": "native-postgres-report.json",
-  "limitation": "Earlier five-check result predates expected-price amendment; current native run is not verified."
+  "applicationAssertionsExecuted": 5,
+  "evidence": "native-postgres-report.json",
+  "priorAttempt": {
+    "status": "blocked",
+    "reason": "Windows sandbox restricted token error87; approved host execution resolved it"
+  },
+  "spatialExtensionTested": false
 }

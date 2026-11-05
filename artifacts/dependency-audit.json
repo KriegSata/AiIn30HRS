@@ -1,0 +1,25 @@
+{
+  "executedAt": "2026-11-05T03:48:23.584157+00:00",
+  "command": "npm audit --json",
+  "auditReportVersion": 2,
+  "vulnerabilities": {},
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    },
+    "dependencies": {
+      "prod": 181,
+      "dev": 146,
+      "optional": 82,
+      "peer": 1,
+      "peerOptional": 0,
+      "total": 373
+    }
+  },
+  "note": "Successful host-approved registry check after initial sandbox network failure; no audit is a guarantee of absence of unknown vulnerabilities."
+}

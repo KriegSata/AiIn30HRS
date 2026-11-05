@@ -7,6 +7,13 @@ const password = () => { if (!process.env.DEMO_PASSWORD) throw new Error('Run np
 // Tests share one loopback address. Respect the real limiter when switching many
 // identities; do not disable server throttling just to accelerate acceptance.
 const rateWindow = async () => { console.info('Rate limit reached; waiting for the next one-minute window.'); await new Promise(resolve => setTimeout(resolve, 61_000)); };
+test.beforeEach(async ({ page }, testInfo) => {
+  const requests: { path: string; status: number; method: string }[] = [];
+  page.on('response', response => {
+    if (response.url().includes('/api/v1/')) requests.push({ path: new URL(response.url()).pathname, status: response.status(), method: response.request().method() });
+  });
+  testInfo.attachments.push({ name: 'http-statuses', contentType: 'application/json', get body() { return Buffer.from(JSON.stringify(requests)); } });
+});
 async function login(page: Page, role: string) {
   await page.goto('/');
   await page.getByLabel('Work email').fill(`${role}@harvestlink.demo`);
@@ -110,12 +117,21 @@ test('buyer search, cold filters, source details, keyboard dialog and mobile lay
   await page.keyboard.press('Escape');
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Yellowfin tuna', exact: true })).toBeFocused();
+  await page.getByRole('button', { name: 'List view', exact: true }).click();
+  for (const width of [900, 1600]) {
+    await page.setViewportSize({ width, height: 1000 });
+    expect(await page.locator('.product-grid').evaluate(element => getComputedStyle(element).gridTemplateColumns.split(' ').length)).toBe(1);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
+  }
+  await page.getByRole('button', { name: 'Grid view', exact: true }).click();
   await page.setViewportSize({ width: 390, height: 844 });
   await page.getByRole('textbox', { name: 'Search products, suppliers or locations' }).fill('');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
   await page.screenshot({ path: 'artifacts/qa-buyer-mobile.png', fullPage: true });
   await nav(page, 'Orders');
   await expect(page.getByRole('heading', { name: 'Your orders', exact: true })).toBeVisible();
+  await expect(page.getByRole('navigation', { name: 'Main navigation' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Open navigation', exact: true })).toBeFocused();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
 });
 
@@ -170,7 +186,10 @@ test('supplier publishes and edits a lot; buyer orders; supplier fulfills; carri
   await login(page, 'buyer');
   await nav(page, 'Orders');
   card = page.locator('.order-card').filter({ hasText: order.orderNumber });
+  const heldResponse = page.waitForResponse(r => r.url().endsWith(`/orders/${order.id}/payment`) && r.request().method() === 'POST');
   await card.getByRole('button', { name: 'Pay in sandbox', exact: true }).click();
+  const heldResult = await heldResponse;
+  expect(heldResult.ok(), `Sandbox payment response: ${heldResult.status()} ${await heldResult.text()}`).toBe(true);
   await expect(card).toContainText('held');
   await logout(page);
   await login(page, 'logistics');
