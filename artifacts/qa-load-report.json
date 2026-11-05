@@ -1,0 +1,37 @@
+{
+  "executedAt": "2026-11-05T03:40:01.048Z",
+  "tool": "Node fetch bounded harness (not k6)",
+  "target": "http://127.0.0.1:4000/api/v1",
+  "concurrency": 4,
+  "measuredRequests": 70,
+  "elapsedMs": 4776,
+  "metrics": {
+    "listing_search": {
+      "requests": 50,
+      "errors": 0,
+      "p50Ms": 13.51,
+      "p95Ms": 89.84,
+      "maxMs": 289.48
+    },
+    "order_create": {
+      "requests": 10,
+      "errors": 0,
+      "p50Ms": 47.24,
+      "p95Ms": 271.63,
+      "maxMs": 271.63
+    },
+    "order_replay": {
+      "requests": 10,
+      "errors": 0,
+      "p50Ms": 18.68,
+      "p95Ms": 53.23,
+      "maxMs": 53.23
+    }
+  },
+  "checks": {
+    "allResponsesSuccessful": true,
+    "tenIdempotentReplays": true,
+    "allReservationsReturned": true
+  },
+  "limitations": "Local development API and embedded PostgreSQL; no production capacity claim. Authentication and cleanup are outside latency measurements."
+}

@@ -81,7 +81,7 @@ jobs:
           COMPOSE_DB_PASSWORD: ci-only-disposable-password
       - name: Verify readiness
         run: |
-          curl --fail http://localhost:3000/ --output /dev/null
+          curl --fail http://127.0.0.1:3100/ --output /dev/null
           curl --fail http://localhost:4000/api/v1/health
       - name: Stop services while preserving no CI data
         if: always()

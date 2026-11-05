@@ -1,7 +1,7 @@
 {
   "runtime": "PGlite experimental PostGIS extension; native cloud PostGIS not verified",
   "version": "3.6 USE_GEOS=1 USE_PROJ=1 USE_STATS=1",
-  "generatedAt": "2026-11-05T03:00:15.690Z",
+  "generatedAt": "2026-11-05T03:28:21.784Z",
   "checks": [
     "all migrations execute",
     "longitude/latitude ordering preserved",

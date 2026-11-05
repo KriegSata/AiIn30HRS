@@ -4,7 +4,9 @@
       "C:\\Program Files\\nodejs\\node.exe",
       "C:\\Users\\Kael\\AiIn30HRS\\node_modules\\@playwright\\test\\cli.js",
       "test",
-      "--list"
+      "--grep",
+      "category and supplier|browser receives",
+      "--workers=1"
     ],
     "configFile": "C:\\Users\\Kael\\AiIn30HRS\\playwright.config.ts",
     "rootDir": "C:/Users/Kael/AiIn30HRS/tests/e2e",
@@ -17,14 +19,18 @@
     "grep": {},
     "grepInvert": null,
     "maxFailures": 0,
-    "metadata": {},
+    "metadata": {
+      "actualWorkers": 1
+    },
     "preserveOutput": "always",
     "projects": [
       {
         "outputDir": "C:/Users/Kael/AiIn30HRS/test-results",
         "repeatEach": 1,
         "retries": 0,
-        "metadata": {},
+        "metadata": {
+          "actualWorkers": 1
+        },
         "id": "",
         "name": "",
         "testDir": "C:/Users/Kael/AiIn30HRS/tests/e2e",
@@ -32,7 +38,7 @@
         "testMatch": [
           "**/*.@(spec|test).?(c|m)[jt]s?(x)"
         ],
-        "timeout": 90000
+        "timeout": 180000
       }
     ],
     "filteredProjects": [
@@ -42,14 +48,17 @@
         "outputDir": "C:\\Users\\Kael\\AiIn30HRS\\test-results",
         "repeatEach": 1,
         "retries": 0,
-        "metadata": {},
+        "metadata": {
+          "actualWorkers": 1
+        },
         "name": "",
         "testDir": "C:\\Users\\Kael\\AiIn30HRS\\tests\\e2e",
         "snapshotDir": "C:\\Users\\Kael\\AiIn30HRS\\tests\\e2e",
         "testIgnore": [],
         "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
-        "timeout": 90000,
+        "timeout": 180000,
         "use": {
+          "actionTimeout": 15000,
           "baseURL": "http://127.0.0.1:3100",
           "viewport": {
             "width": 1440,
@@ -110,123 +119,106 @@
       "line": 0,
       "specs": [
         {
-          "title": "login and five role landing pages have no automated WCAG AA violations",
+          "title": "browser receives distinct authorized live events and refreshes order status",
           "ok": true,
           "tags": [],
           "tests": [
             {
-              "timeout": 90000,
+              "timeout": 150000,
               "annotations": [],
               "expectedStatus": "passed",
               "projectId": "",
               "projectName": "",
-              "results": [],
-              "status": "skipped"
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 24679,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-05T03:38:39.036Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
             }
           ],
-          "id": "170e8a9d719db4caeb1d-1a61c282b2bc88b34a64",
+          "id": "170e8a9d719db4caeb1d-79dd4c6fab3f14fe475a",
           "file": "marketplace.spec.ts",
-          "line": 63,
+          "line": 336,
           "column": 5
         },
         {
-          "title": "buyer search, cold filters, source details, keyboard dialog and mobile layout",
-          "ok": true,
+          "title": "category and supplier location combine, optional filters use explicit units, reset restores results",
+          "ok": false,
           "tags": [],
           "tests": [
             {
-              "timeout": 90000,
+              "timeout": 180000,
               "annotations": [],
               "expectedStatus": "passed",
               "projectId": "",
               "projectName": "",
-              "results": [],
-              "status": "skipped"
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 2810,
+                  "error": {
+                    "message": "Error: locator.click: Error: strict mode violation: getByRole('button', { name: 'Reset all filters', exact: true }) resolved to 2 elements:\n    1) <button class=\"text-button reset-filters\">Reset all filters</button> aka getByLabel('Active filters').getByRole('button', { name: 'Reset all filters' })\n    2) <button class=\"button secondary\">Reset all filters</button> aka getByRole('button', { name: 'Reset all filters' }).nth(1)\n\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Reset all filters', exact: true })\u001b[22m\n",
+                    "stack": "Error: locator.click: Error: strict mode violation: getByRole('button', { name: 'Reset all filters', exact: true }) resolved to 2 elements:\n    1) <button class=\"text-button reset-filters\">Reset all filters</button> aka getByLabel('Active filters').getByRole('button', { name: 'Reset all filters' })\n    2) <button class=\"button secondary\">Reset all filters</button> aka getByRole('button', { name: 'Reset all filters' }).nth(1)\n\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Reset all filters', exact: true })\u001b[22m\n\n    at C:\\Users\\Kael\\AiIn30HRS\\tests\\e2e\\marketplace.spec.ts:366:78",
+                    "location": {
+                      "file": "C:\\Users\\Kael\\AiIn30HRS\\tests\\e2e\\marketplace.spec.ts",
+                      "column": 78,
+                      "line": 366
+                    },
+                    "snippet": "  364 |   await page.getByRole('combobox', { name: 'Location', exact: true }).selectOption({ label: 'Benguet, Cordillera' });\n  365 |   await expect(page.locator('.product-card')).toHaveCount(0);\n> 366 |   await page.getByRole('button', { name: 'Reset all filters', exact: true }).click();\n      |                                                                              ^\n  367 |   await expect(page.getByRole('button', { name: 'Yellowfin tuna', exact: true })).toBeVisible();\n  368 |   await page.getByRole('combobox', { name: 'Category', exact: true }).selectOption('seafood');\n  369 |   await page.getByRole('combobox', { name: 'Location', exact: true }).selectOption({ label: 'General Santos, South Cotabato' });"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\Kael\\AiIn30HRS\\tests\\e2e\\marketplace.spec.ts",
+                        "column": 78,
+                        "line": 366
+                      },
+                      "message": "Error: locator.click: Error: strict mode violation: getByRole('button', { name: 'Reset all filters', exact: true }) resolved to 2 elements:\n    1) <button class=\"text-button reset-filters\">Reset all filters</button> aka getByLabel('Active filters').getByRole('button', { name: 'Reset all filters' })\n    2) <button class=\"button secondary\">Reset all filters</button> aka getByRole('button', { name: 'Reset all filters' }).nth(1)\n\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Reset all filters', exact: true })\u001b[22m\n\n\n  364 |   await page.getByRole('combobox', { name: 'Location', exact: true }).selectOption({ label: 'Benguet, Cordillera' });\n  365 |   await expect(page.locator('.product-card')).toHaveCount(0);\n> 366 |   await page.getByRole('button', { name: 'Reset all filters', exact: true }).click();\n      |                                                                              ^\n  367 |   await expect(page.getByRole('button', { name: 'Yellowfin tuna', exact: true })).toBeVisible();\n  368 |   await page.getByRole('combobox', { name: 'Category', exact: true }).selectOption('seafood');\n  369 |   await page.getByRole('combobox', { name: 'Location', exact: true }).selectOption({ label: 'General Santos, South Cotabato' });\n    at C:\\Users\\Kael\\AiIn30HRS\\tests\\e2e\\marketplace.spec.ts:366:78"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-05T03:39:04.795Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "C:\\Users\\Kael\\AiIn30HRS\\test-results\\marketplace-category-and-s-122f2-nits-reset-restores-results\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\Kael\\AiIn30HRS\\test-results\\marketplace-category-and-s-122f2-nits-reset-restores-results\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\Kael\\AiIn30HRS\\tests\\e2e\\marketplace.spec.ts",
+                    "column": 78,
+                    "line": 366
+                  }
+                }
+              ],
+              "status": "unexpected"
             }
           ],
-          "id": "170e8a9d719db4caeb1d-3900368f1ba1bc077386",
+          "id": "170e8a9d719db4caeb1d-0b4bf47c404e8aa23db7",
           "file": "marketplace.spec.ts",
-          "line": 77,
-          "column": 5
-        },
-        {
-          "title": "supplier publishes and edits a lot; buyer orders; supplier fulfills; carrier delivers; buyer settles",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 90000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [],
-              "status": "skipped"
-            }
-          ],
-          "id": "170e8a9d719db4caeb1d-9310d9f1e6dafd66d61f",
-          "file": "marketplace.spec.ts",
-          "line": 106,
-          "column": 5
-        },
-        {
-          "title": "offline order remains pending, reconnect submits exactly once, signout clears pending data",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 90000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [],
-              "status": "skipped"
-            }
-          ],
-          "id": "170e8a9d719db4caeb1d-80bdf31046409fbbab3a",
-          "file": "marketplace.spec.ts",
-          "line": 190,
-          "column": 5
-        },
-        {
-          "title": "offline stale price becomes a reviewable conflict without reserving stock",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 90000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [],
-              "status": "skipped"
-            }
-          ],
-          "id": "170e8a9d719db4caeb1d-1072890923372c9c0d8d",
-          "file": "marketplace.spec.ts",
-          "line": 231,
-          "column": 5
-        },
-        {
-          "title": "admin verifies an organization and reviews a buyer dispute with an audit reason",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 90000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "",
-              "projectName": "",
-              "results": [],
-              "status": "skipped"
-            }
-          ],
-          "id": "170e8a9d719db4caeb1d-55df52e33e4cc2e9b480",
-          "file": "marketplace.spec.ts",
-          "line": 253,
+          "line": 358,
           "column": 5
         }
       ]
@@ -234,11 +226,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-11-05T03:07:03.173Z",
-    "duration": 445.077,
-    "expected": 0,
-    "skipped": 6,
-    "unexpected": 0,
+    "startTime": "2026-11-05T03:38:33.043Z",
+    "duration": 36553.775,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 1,
     "flaky": 0
   }
 }

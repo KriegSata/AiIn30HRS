@@ -1,0 +1,40 @@
+{
+  "url": "http://127.0.0.1:3100/",
+  "timestamp": "2026-11-05T03:43:31.638Z",
+  "violations": [],
+  "passes": [
+    "aria-allowed-attr",
+    "aria-conditional-attr",
+    "aria-deprecated-role",
+    "aria-hidden-body",
+    "aria-hidden-focus",
+    "aria-prohibited-attr",
+    "aria-required-attr",
+    "aria-roles",
+    "aria-valid-attr-value",
+    "aria-valid-attr",
+    "button-name",
+    "color-contrast",
+    "definition-list",
+    "dlitem",
+    "duplicate-id-aria",
+    "form-field-multiple-labels",
+    "label",
+    "meta-viewport",
+    "nested-interactive",
+    "svg-img-alt"
+  ],
+  "incomplete": [
+    {
+      "id": "color-contrast",
+      "nodes": [
+        [
+          ".detail-visual > p:nth-child(3)"
+        ],
+        [
+          ".detail-visual > .small-copy.muted"
+        ]
+      ]
+    }
+  ]
+}

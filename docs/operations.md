@@ -23,7 +23,7 @@ docker compose --env-file .env.local up --build -d --wait
 npm run demo:credentials
 ```
 
-Open <http://localhost:3000>. Only the web/API ports bind to loopback; PostgreSQL and Redis have no host ports. `.env.local` is ignored by Git and excluded from Docker builds. Never use plain `docker compose config` in shared logs because it renders environment values. `--env-file` supplies Compose interpolation; `env_file` separately passes the application environment to the API. See [Docker interpolation documentation](https://docs.docker.com/compose/how-tos/environment-variables/variable-interpolation).
+Open <http://127.0.0.1:3100>. Only the web/API ports bind to loopback; PostgreSQL and Redis have no host ports. `.env.local` is ignored by Git and excluded from Docker builds. Never use plain `docker compose config` in shared logs because it renders environment values. `--env-file` supplies Compose interpolation; `env_file` separately passes the application environment to the API. See [Docker interpolation documentation](https://docs.docker.com/compose/how-tos/environment-variables/variable-interpolation).
 
 ```powershell
 docker compose --env-file .env.local ps

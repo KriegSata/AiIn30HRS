@@ -1,0 +1,10 @@
+{
+  "executedAt": "2026-11-05",
+  "status": "blocked",
+  "command": "npm run test:native",
+  "stage": "native server startup",
+  "reason": "Windows sandbox: pg_ctl could not create restricted token (87), could not start server (3)",
+  "applicationAssertionsExecuted": 0,
+  "earlierPassingEvidence": "native-postgres-report.json",
+  "limitation": "Earlier five-check result predates expected-price amendment; current native run is not verified."
+}

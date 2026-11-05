@@ -4,8 +4,8 @@ import { loadEnvFile } from 'node:process';
 if (!existsSync('.env.local')) await import('./setup.mjs');
 loadEnvFile('.env.local');
 const children = [
-  spawn(process.execPath, ['--import', 'tsx', 'apps/api/src/main.ts'], { stdio: 'inherit', env: process.env }),
-  spawn(process.execPath, ['node_modules/next/dist/bin/next', 'dev', 'apps/web', '--hostname', '127.0.0.1', '--port', '3100'], { stdio: 'inherit', env: process.env }),
+  spawn(process.execPath, process.argv.includes('--compiled') ? ['dist/api/apps/api/src/main.js'] : ['--import', 'tsx', 'apps/api/src/main.ts'], { stdio: 'inherit', env: process.env, windowsHide: true }),
+  spawn(process.execPath, ['node_modules/next/dist/bin/next', 'dev', 'apps/web', '--hostname', '127.0.0.1', '--port', '3100'], { stdio: 'inherit', env: process.env, windowsHide: true }),
 ];
 let stopping = false;
 function stop(code = 0) { if (stopping) return; stopping = true; for (const child of children) child.kill(); process.exitCode = code; }

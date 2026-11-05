@@ -1,0 +1,164 @@
+{
+  "total": {
+    "lines": {
+      "total": 687,
+      "covered": 682,
+      "skipped": 0,
+      "pct": 99.27
+    },
+    "statements": {
+      "total": 687,
+      "covered": 682,
+      "skipped": 0,
+      "pct": 99.27
+    },
+    "functions": {
+      "total": 137,
+      "covered": 134,
+      "skipped": 0,
+      "pct": 97.81
+    },
+    "branches": {
+      "total": 558,
+      "covered": 488,
+      "skipped": 0,
+      "pct": 87.45
+    },
+    "branchesTrue": {
+      "total": 0,
+      "covered": 0,
+      "skipped": 0,
+      "pct": "Unknown"
+    }
+  },
+  "C:\\Users\\Kael\\AiIn30HRS\\apps\\api\\src\\auth.ts": {
+    "lines": {
+      "total": 72,
+      "covered": 69,
+      "skipped": 0,
+      "pct": 95.83
+    },
+    "functions": {
+      "total": 11,
+      "covered": 11,
+      "skipped": 0,
+      "pct": 100
+    },
+    "statements": {
+      "total": 72,
+      "covered": 69,
+      "skipped": 0,
+      "pct": 95.83
+    },
+    "branches": {
+      "total": 40,
+      "covered": 35,
+      "skipped": 0,
+      "pct": 87.5
+    }
+  },
+  "C:\\Users\\Kael\\AiIn30HRS\\apps\\api\\src\\core.ts": {
+    "lines": {
+      "total": 81,
+      "covered": 81,
+      "skipped": 0,
+      "pct": 100
+    },
+    "functions": {
+      "total": 24,
+      "covered": 22,
+      "skipped": 0,
+      "pct": 91.66
+    },
+    "statements": {
+      "total": 81,
+      "covered": 81,
+      "skipped": 0,
+      "pct": 100
+    },
+    "branches": {
+      "total": 56,
+      "covered": 53,
+      "skipped": 0,
+      "pct": 94.64
+    }
+  },
+  "C:\\Users\\Kael\\AiIn30HRS\\apps\\api\\src\\mappers.ts": {
+    "lines": {
+      "total": 17,
+      "covered": 17,
+      "skipped": 0,
+      "pct": 100
+    },
+    "functions": {
+      "total": 11,
+      "covered": 11,
+      "skipped": 0,
+      "pct": 100
+    },
+    "statements": {
+      "total": 17,
+      "covered": 17,
+      "skipped": 0,
+      "pct": 100
+    },
+    "branches": {
+      "total": 23,
+      "covered": 17,
+      "skipped": 0,
+      "pct": 73.91
+    }
+  },
+  "C:\\Users\\Kael\\AiIn30HRS\\apps\\api\\src\\marketplace.ts": {
+    "lines": {
+      "total": 390,
+      "covered": 388,
+      "skipped": 0,
+      "pct": 99.48
+    },
+    "functions": {
+      "total": 47,
+      "covered": 47,
+      "skipped": 0,
+      "pct": 100
+    },
+    "statements": {
+      "total": 390,
+      "covered": 388,
+      "skipped": 0,
+      "pct": 99.48
+    },
+    "branches": {
+      "total": 327,
+      "covered": 287,
+      "skipped": 0,
+      "pct": 87.76
+    }
+  },
+  "C:\\Users\\Kael\\AiIn30HRS\\apps\\api\\src\\server.ts": {
+    "lines": {
+      "total": 127,
+      "covered": 127,
+      "skipped": 0,
+      "pct": 100
+    },
+    "functions": {
+      "total": 44,
+      "covered": 43,
+      "skipped": 0,
+      "pct": 97.72
+    },
+    "statements": {
+      "total": 127,
+      "covered": 127,
+      "skipped": 0,
+      "pct": 100
+    },
+    "branches": {
+      "total": 112,
+      "covered": 96,
+      "skipped": 0,
+      "pct": 85.71
+    }
+  }
+}

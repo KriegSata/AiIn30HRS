@@ -48,7 +48,7 @@ export async function refreshSession(): Promise<Session> {
     .finally(() => { if (refreshing === promise) refreshing = null; });
   refreshing = promise; return promise;
 }
-export async function api<T>(path: string, options: { method?: string; body?: unknown; key?: string; expectedOwner?: string } = {}, retry = true): Promise<T> {
+export async function api<T>(path: string, options: { method?: string; body?: unknown; key?: string; expectedOwner?: string; envelope?: boolean } = {}, retry = true): Promise<T> {
   if (path === '/auth/login' || path === '/auth/register') await revokePendingSignOut();
   const startedGeneration = sessionGeneration; const startedIdentity = identity;
   if (options.expectedOwner && options.expectedOwner !== identity) throw new ApiFailure(401, 'This submission belongs to another session.');
@@ -63,7 +63,7 @@ export async function api<T>(path: string, options: { method?: string; body?: un
     if (response.status === 401 && retry && !path.startsWith('/auth/')) { await refreshSession(); if (startedIdentity !== identity || startedGeneration !== sessionGeneration) throw new ApiFailure(401, 'Account changed. Your previous submission will not be retried.'); return api<T>(path, options, false); }
     const body = await response.json().catch(() => ({}));
     if (!response.ok) throw new ApiFailure(response.status, body.error?.message || `Request failed (${response.status}).`, body.error?.code);
-    return body.data as T;
+    return (options.envelope ? body : body.data) as T;
   } finally { clearTimeout(timer); activeRequests.delete(abort); }
 }
 export const accessToken = () => token;

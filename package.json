@@ -9,6 +9,7 @@
   "scripts": {
     "setup": "node scripts/setup.mjs",
     "dev": "node scripts/dev.mjs",
+    "dev:compiled": "npm run build:api && node scripts/dev.mjs --compiled",
     "dev:api": "node --env-file-if-exists=.env.local --import tsx apps/api/src/main.ts",
     "dev:web": "next dev apps/web --hostname 127.0.0.1 --port 3100",
     "build:api": "tsc -p apps/api/tsconfig.json",
@@ -16,6 +17,8 @@
     "build": "npm run build:api && npm run build:web",
     "typecheck": "tsc -p apps/api/tsconfig.json --noEmit && tsc -p apps/web/tsconfig.json --noEmit",
     "test": "node --import tsx --test apps/api/test/*.test.ts db/*.test.ts",
+    "test:compiled": "tsc -p tsconfig.test.json && node --test dist/tests/apps/api/test/*.test.js dist/tests/db/*.test.js",
+    "test:coverage:compiled": "tsc -p tsconfig.test.json && c8 --include=dist/tests/apps/api/src/** --exclude=dist/tests/apps/api/src/main.js --exclude=dist/tests/apps/api/src/database.js --reporter=text --reporter=json-summary --reporter=html node --test dist/tests/apps/api/test/*.test.js",
     "test:coverage": "c8 --include=apps/api/src/** --exclude=apps/api/src/main.ts --exclude=apps/api/src/database.ts --reporter=text --reporter=json-summary --reporter=html node --import tsx --test apps/api/test/*.test.ts",
     "test:e2e": "playwright test",
     "check:contracts": "node scripts/check-contracts.mjs",

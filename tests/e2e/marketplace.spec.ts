@@ -4,13 +4,23 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 
 const unique = () => `QA-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
 const password = () => { if (!process.env.DEMO_PASSWORD) throw new Error('Run npm run setup before E2E tests.'); return process.env.DEMO_PASSWORD; };
+// Tests share one loopback address. Respect the real limiter when switching many
+// identities; do not disable server throttling just to accelerate acceptance.
+const rateWindow = async () => { console.info('Rate limit reached; waiting for the next one-minute window.'); await new Promise(resolve => setTimeout(resolve, 61_000)); };
 async function login(page: Page, role: string) {
   await page.goto('/');
   await page.getByLabel('Work email').fill(`${role}@harvestlink.demo`);
   await page.getByLabel('Password', { exact: true }).fill(password());
-  const response = page.waitForResponse(r => r.url().endsWith('/auth/login') && r.request().method() === 'POST');
+  const isSignInResult = (r: import('@playwright/test').Response) => r.request().method() === 'POST' && (r.url().endsWith('/auth/login') || (r.url().endsWith('/auth/logout') && r.status() >= 400));
+  const response = page.waitForResponse(isSignInResult);
   await page.getByRole('button', { name: 'Sign in to your workspace' }).click();
-  const result = await response;
+  let result = await response;
+  if (result.status() === 429) {
+    await rateWindow();
+    const retry = page.waitForResponse(isSignInResult);
+    await page.getByRole('button', { name: 'Sign in to your workspace' }).click();
+    result = await retry;
+  }
   expect(result.status()).toBe(200);
   await expect(page.getByRole('navigation', { name: 'Main navigation' })).toBeAttached();
   await expect(page.getByText('Loading your workspace…')).toHaveCount(0);
@@ -19,8 +29,9 @@ async function login(page: Page, role: string) {
 async function nav(page: Page, name: string) {
   const open = page.getByRole('button', { name: 'Open navigation', exact: true });
   if (await open.isVisible()) await open.click();
-  const label = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  await page.getByRole('navigation').getByRole('button', { name: new RegExp(`^${label}(?: \\d+)?$`) }).click();
+  const destination = page.getByRole('navigation').getByRole('button', { name: new RegExp(`^${name}(?:[ ]+[0-9]+)?$`) });
+  if (!await destination.isVisible()) await page.locator('summary').filter({ hasText: 'Business tools' }).click();
+  await destination.click();
 }
 async function logout(page: Page) {
   await nav(page, 'My organization');
@@ -28,14 +39,18 @@ async function logout(page: Page) {
   await expect(page.getByLabel('Work email')).toBeVisible();
 }
 async function call(request: APIRequestContext, session: any, path: string, method = 'GET', data?: unknown) {
-  const response = await request.fetch(`/api/v1${path}`, {
+  const options = {
     method, headers: { Authorization: `Bearer ${session.accessToken}`, Origin: 'http://127.0.0.1:3100', 'Idempotency-Key': unique() }, data,
-  });
+  };
+  let response = await request.fetch(`/api/v1${path}`, options);
+  if (response.status() === 429) { await rateWindow(); response = await request.fetch(`/api/v1${path}`, options); }
   expect(response.ok(), `${method} ${path}: ${response.status()}`).toBeTruthy();
   return (await response.json()).data;
 }
 async function apiLogin(request: APIRequestContext, role: string) {
-  const response = await request.post('/api/v1/auth/login', { headers: { Origin: 'http://127.0.0.1:3100' }, data: { email: `${role}@harvestlink.demo`, password: password() } });
+  const options = { headers: { Origin: 'http://127.0.0.1:3100' }, data: { email: `${role}@harvestlink.demo`, password: password() } };
+  let response = await request.post('/api/v1/auth/login', options);
+  if (response.status() === 429) { await rateWindow(); response = await request.post('/api/v1/auth/login', options); }
   expect(response.status()).toBe(200);
   return (await response.json()).data;
 }
@@ -77,9 +92,9 @@ test('login and five role landing pages have no automated WCAG AA violations', a
 
 test('buyer search, cold filters, source details, keyboard dialog and mobile layout', async ({ page }) => {
   await login(page, 'buyer');
-  await page.getByRole('button', { name: 'Seafood', exact: true }).click();
+  await page.getByRole('combobox', { name: 'Category', exact: true }).selectOption('seafood');
   await expect(page.locator('.product-card')).toHaveCount(2);
-  await page.getByRole('button', { name: 'Filters', exact: true }).click();
+  await page.locator('summary').filter({ hasText: 'More filters' }).click();
   await page.getByLabel('Chilled or frozen only').check();
   await page.getByRole('textbox', { name: 'Search products, suppliers or locations' }).fill('Yellowfin');
   await expect(page.locator('.product-card')).toHaveCount(1);
@@ -96,7 +111,7 @@ test('buyer search, cold filters, source details, keyboard dialog and mobile lay
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Yellowfin tuna', exact: true })).toBeFocused();
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.getByRole('button', { name: 'Clear search' }).click();
+  await page.getByRole('textbox', { name: 'Search products, suppliers or locations' }).fill('');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
   await page.screenshot({ path: 'artifacts/qa-buyer-mobile.png', fullPage: true });
   await nav(page, 'Orders');
@@ -124,7 +139,7 @@ test('supplier publishes and edits a lot; buyer orders; supplier fulfills; carri
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await expect(listingRow).toContainText('₱96');
   await logout(page);
-  const buyer = await login(page, 'buyer');
+  let buyer = await login(page, 'buyer');
   await openProduct(page, title);
   await page.getByLabel('Delivery notes (optional)').fill(title);
   const created = page.waitForResponse(r => r.url().endsWith('/orders') && r.request().method() === 'POST');
@@ -142,7 +157,7 @@ test('supplier publishes and edits a lot; buyer orders; supplier fulfills; carri
   await card.getByRole('button', { name: 'Start preparing', exact: true }).click();
   await card.getByRole('button', { name: 'Ready for pickup', exact: true }).click();
   await card.getByRole('button', { name: 'Schedule pickup', exact: true }).click();
-  await page.getByLabel('Logistics partner', { exact: true }).selectOption({ label: 'CoolMove Logistics' });
+  await page.getByRole('combobox', { name: 'Logistics partner', exact: true }).selectOption({ label: 'CoolMove Logistics' });
   await page.getByLabel('Vehicle reference', { exact: true }).fill(title);
   const localDate = (hours: number) => { const d = new Date(Date.now() + hours * 3600000); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 16); };
   await page.getByLabel('Scheduled pickup', { exact: true }).fill(localDate(1));
@@ -173,7 +188,7 @@ test('supplier publishes and edits a lot; buyer orders; supplier fulfills; carri
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await expect(shipment).toContainText('delivered');
   await logout(page);
-  await login(page, 'buyer');
+  buyer = await login(page, 'buyer');
   await nav(page, 'Orders');
   card = page.locator('.order-card').filter({ hasText: order.orderNumber });
   await card.getByRole('button', { name: 'Release sandbox funds', exact: true }).click();
@@ -275,7 +290,7 @@ test('admin verifies an organization and reviews a buyer dispute with an audit r
   await nav(page, 'Verification');
   const organization = page.getByRole('row').filter({ hasText: 'Laguna Family Farms' });
   await organization.getByRole('button', { name: 'Review', exact: true }).click();
-  await page.getByLabel('Verification decision').selectOption('verified');
+  await page.getByRole('combobox', { name: 'Verification decision', exact: true }).selectOption('verified');
   await page.getByLabel('Review reason').fill('QA synthetic license evidence reviewed for acceptance test.');
   await page.getByRole('button', { name: 'Save changes', exact: true }).click();
   await expect(page.getByRole('dialog')).toHaveCount(0);
@@ -283,15 +298,105 @@ test('admin verifies an organization and reviews a buyer dispute with an audit r
   await nav(page, 'Disputes');
   const disputeCard = page.locator('.rfq-card').filter({ hasText: reason });
   await disputeCard.getByRole('button', { name: 'Review & resolve' }).click();
-  await page.getByLabel('Decision', { exact: true }).selectOption('resolved_refund');
+  await page.getByRole('combobox', { name: 'Decision', exact: true }).selectOption('resolved_refund');
   await page.getByLabel('Resolution and evidence').fill('QA evidence reviewed; refund authorized for synthetic acceptance order.');
   await page.getByRole('button', { name: 'Save changes', exact: true }).click();
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await expect(disputeCard).toContainText('resolved refund');
   const rows = await call(request, admin, '/disputes?pageSize=100');
   expect(rows.find((row: any) => row.id === dispute.id).status).toBe('resolved_refund');
-  expect((await call(request, buyer, `/orders/${dispute.orderId}/payment`)).status).toBe('refunded');
+  expect((await call(request, admin, `/orders/${dispute.orderId}/payment`)).status).toBe('refunded');
   await nav(page, 'Audit trail');
   await page.getByRole('textbox', { name: 'Search audit events' }).fill('dispute');
   await expect(page.locator('tbody')).toContainText('dispute');
+});
+
+test('offline signout locks the shared device and revokes the old session on reconnect', async ({ page, context, request }) => {
+  const supplier = await apiLogin(request, 'supplier');
+  const title = unique(); await makeListing(request, supplier, title);
+  const buyer = await login(page, 'buyer');
+  await openProduct(page, title);
+  await context.setOffline(true);
+  await page.getByRole('button', { name: 'Place bulk order', exact: true }).click();
+  await expect(page.locator('.outbox-banner')).toBeVisible();
+  await logout(page);
+  expect(await page.evaluate(() => localStorage.getItem('harvestlink-pending-signout'))).toBe('1');
+  await expect(page.getByRole('navigation')).toHaveCount(0);
+  const signedOut = page.waitForResponse(r => r.url().endsWith('/auth/logout'));
+  await context.setOffline(false);
+  expect((await signedOut).status()).toBe(204);
+  await page.reload();
+  await expect(page.getByLabel('Work email')).toBeVisible();
+  const rejected = await request.get('/api/v1/orders', { headers: { Authorization: `Bearer ${buyer.accessToken}` } });
+  expect(rejected.status()).toBe(401);
+  await login(page, 'fisher');
+  await expect(page.locator('.outbox-banner')).toHaveCount(0);
+});
+
+test('browser receives distinct authorized live events and refreshes order status', async ({ page, request }) => {
+  test.setTimeout(150_000);
+  const supplier = await apiLogin(request, 'supplier');
+  const listing = await makeListing(request, supplier, unique());
+  const frames: string[] = [];
+  page.on('websocket', socket => {
+    if (socket.url().includes('/socket.io/')) socket.on('framereceived', frame => frames.push(String(frame.payload)));
+  });
+  const buyer = await login(page, 'buyer');
+  await expect.poll(() => frames.some(frame => frame.includes('"ready"'))).toBe(true);
+  const draft = await call(request, buyer, '/orders', 'POST', { items: [{ listingId: listing.id, quantity: '1.000', expectedUnitPriceMinor: listing.pricePerUnitMinor }], deliveryLocation: buyer.organization.location, deliveryBy: new Date(Date.now() + 86400000).toISOString(), notes: unique() });
+  await nav(page, 'Orders');
+  const confirmed = await call(request, supplier, `/orders/${draft.id}/status`, 'POST', { expectedVersion: draft.version, status: 'confirmed' });
+  const card = page.locator('.order-card').filter({ hasText: draft.orderNumber });
+  await expect(card).toContainText('confirmed', { timeout: 25_000 });
+  await expect.poll(() => frames.filter(frame => frame.includes('domain.event') && frame.includes(draft.id)).length, { timeout: 20_000 }).toBeGreaterThan(0);
+  const count = frames.filter(frame => frame.includes('domain.event') && frame.includes(draft.id)).length;
+  await call(request, supplier, `/orders/${draft.id}/status`, 'POST', { expectedVersion: confirmed.version, status: 'preparing' });
+  await expect.poll(() => frames.filter(frame => frame.includes('domain.event') && frame.includes(draft.id)).length, { timeout: 25_000 }).toBeGreaterThan(count);
+  await expect(card).toContainText('preparing');
+});
+
+test('category and supplier location combine, optional filters use explicit units, reset restores results', async ({ page }) => {
+  await login(page, 'buyer');
+  await expect(page.locator('.market-hero')).toHaveCount(0);
+  await expect(page.getByRole('navigation', { name: 'Main navigation' }).getByRole('button')).toHaveCount(4);
+  await page.getByRole('combobox', { name: 'Category', exact: true }).selectOption('seafood');
+  await expect(page.locator('.product-card')).toHaveCount(2);
+  await page.getByRole('combobox', { name: 'Location', exact: true }).selectOption({ label: 'Benguet, Cordillera' });
+  await expect(page.locator('.product-card')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Reset all filters', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Yellowfin tuna', exact: true })).toBeVisible();
+  await page.getByRole('combobox', { name: 'Category', exact: true }).selectOption('seafood');
+  await page.getByRole('combobox', { name: 'Location', exact: true }).selectOption({ label: 'General Santos, South Cotabato' });
+  await page.locator('summary').filter({ hasText: 'More filters' }).click();
+  await page.getByRole('combobox', { name: 'Order unit', exact: true }).selectOption('kg');
+  await page.getByLabel('Maximum price (PHP per kg)', { exact: true }).fill('300');
+  await expect(page.locator('.product-card')).toHaveCount(1);
+  await expect(page.locator('.product-card')).toContainText('Fresh whiteleg shrimp');
+  await page.getByLabel('Minimum order at most (kg)', { exact: true }).fill('10');
+  await expect(page.locator('.product-card')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Reset all filters', exact: true }).click();
+  await expect(page.getByRole('combobox', { name: 'Order unit', exact: true })).toHaveValue('all');
+  await expect(page.getByLabel('Maximum price (PHP)', { exact: true })).toBeDisabled();
+  await expect(page.getByRole('button', { name: 'Yellowfin tuna', exact: true })).toBeVisible();
+  const firstProduct = await page.locator('.product-card').first().boundingBox();
+  expect(firstProduct!.y).toBeLessThan(700);
+});
+
+test('catalog can load a second page and filter its supplier location', async ({ page }) => {
+  let fixtures: any[] = [];
+  await page.route('**/api/v1/listings?**', async route => {
+    const response = await route.fetch(); const body = await response.json();
+    if (!response.ok()) return route.fulfill({ response });
+    if (!fixtures.length) fixtures = Array.from({ length: 101 }, (_, index) => ({ ...body.data[0], id: `00000000-0000-4000-8000-${String(index).padStart(12, '0')}`, title: `Catalog pagination fixture ${index}`, location: { ...body.data[0].location, label: index === 100 ? 'Palawan test landing' : 'Test farm location' } }));
+    const pageNumber = Number(new URL(route.request().url()).searchParams.get('page') || '1');
+    await route.fulfill({ json: { data: fixtures.slice((pageNumber - 1) * 100, pageNumber * 100), meta: { page: pageNumber, pageSize: 100, total: 101 } } });
+  });
+  await login(page, 'buyer');
+  await expect(page.locator('.product-card')).toHaveCount(100);
+  await page.getByRole('button', { name: 'Load more products', exact: true }).click();
+  await expect(page.locator('.product-card')).toHaveCount(101);
+  await expect(page.getByRole('button', { name: 'Load more products', exact: true })).toHaveCount(0);
+  await page.getByRole('combobox', { name: 'Location', exact: true }).selectOption('Palawan test landing');
+  await expect(page.locator('.product-card')).toHaveCount(1);
+  await expect(page.locator('.product-card')).toContainText('Catalog pagination fixture 100');
 });
