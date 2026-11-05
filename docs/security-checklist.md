@@ -6,7 +6,7 @@ Statuses: **PASS** means observed source plus relevant executed assertions; **PA
 
 ## Contract and release authority
 
-The Principal approved contract freeze 1.0.0 and subsequent amendments in [integration log](integration-log.md). Amendment 1.0.3 addresses S-01 expected-price validation. Principal architecture signoff: **APPROVED for MVP implementation**. Principal local-demo release signoff: **PENDING final remediation evidence**. Commercial release: **NOT APPROVED**.
+The Principal approved contract freeze 1.0.0 and subsequent amendments in [integration log](integration-log.md). Amendment 1.0.3 addresses S-01 expected-price validation. Principal architecture signoff: **APPROVED for MVP implementation**. Principal local-demo release signoff: **APPROVED for the local sandbox MVP — 2026-11-05**. Commercial release: **NOT APPROVED**.
 
 ## Delivered controls
 
@@ -39,6 +39,6 @@ The Principal approved contract freeze 1.0.0 and subsequent amendments in [integ
 - Initial restricted-runner ENOMEM was resolved by host execution; it was not an application assertion failure.
 - Native PostgreSQL evidence: [five-check artifact](../artifacts/native-postgres-report.json), reviewed but not independently rerun.
 - Findings and reproducible steps: [S-01, S-02, S-03](security-report.md).
-- Final build/commit: pending Principal integration.
+- Final integration: Principal reviewed the Alibaba-style storefront, accepted the independent UI review, and observed the final build plus all 10 browser scenarios passing. See [test report](test-report.md) for scope and artifacts. No repository commit or commercial deployment is claimed.
 - Accepted exception record, if any, must include environment, impact, owner, compensating control, expiry, and Principal decision.
 

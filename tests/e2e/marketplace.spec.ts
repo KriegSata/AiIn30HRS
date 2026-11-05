@@ -7,14 +7,29 @@ const password = () => { if (!process.env.DEMO_PASSWORD) throw new Error('Run np
 // Tests share one loopback address. Respect the real limiter when switching many
 // identities; do not disable server throttling just to accelerate acceptance.
 const rateWindow = async () => { console.info('Rate limit reached; waiting for the next one-minute window.'); await new Promise(resolve => setTimeout(resolve, 61_000)); };
-test.beforeEach(async ({ page }, testInfo) => {
+// Each role loads its workspace and receives live events. Pace synthetic identity
+// switches so this shared-IP acceptance suite stays inside the real 300/min cap.
+// The unpaced suite reproduced RATE_LIMITED on payment/refresh requests.
+let lastIdentitySwitch = 0;
+async function paceIdentitySwitch() {
+  const wait = 12_000 - (Date.now() - lastIdentitySwitch);
+  if (wait > 0) await new Promise(resolve => setTimeout(resolve, wait));
+  lastIdentitySwitch = Date.now();
+}
+const httpStatuses = new WeakMap<Page, { path: string; status: number; method: string }[]>();
+test.beforeEach(async ({ page }) => {
   const requests: { path: string; status: number; method: string }[] = [];
+  httpStatuses.set(page, requests);
   page.on('response', response => {
     if (response.url().includes('/api/v1/')) requests.push({ path: new URL(response.url()).pathname, status: response.status(), method: response.request().method() });
   });
-  testInfo.attachments.push({ name: 'http-statuses', contentType: 'application/json', get body() { return Buffer.from(JSON.stringify(requests)); } });
+});
+test.afterEach(async ({ page }, testInfo) => {
+  await testInfo.attach('http-statuses', { contentType: 'application/json', body: Buffer.from(JSON.stringify(httpStatuses.get(page) ?? [])) });
+  httpStatuses.delete(page);
 });
 async function login(page: Page, role: string) {
+  await paceIdentitySwitch();
   await page.goto('/');
   await page.getByLabel('Work email').fill(`${role}@harvestlink.demo`);
   await page.getByLabel('Password', { exact: true }).fill(password());
@@ -55,6 +70,7 @@ async function call(request: APIRequestContext, session: any, path: string, meth
   return (await response.json()).data;
 }
 async function apiLogin(request: APIRequestContext, role: string) {
+  await paceIdentitySwitch();
   const options = { headers: { Origin: 'http://127.0.0.1:3100' }, data: { email: `${role}@harvestlink.demo`, password: password() } };
   let response = await request.post('/api/v1/auth/login', options);
   if (response.status() === 429) { await rateWindow(); response = await request.post('/api/v1/auth/login', options); }
@@ -120,7 +136,7 @@ test('buyer search, cold filters, source details, keyboard dialog and mobile lay
   await page.getByRole('button', { name: 'List view', exact: true }).click();
   for (const width of [900, 1600]) {
     await page.setViewportSize({ width, height: 1000 });
-    expect(await page.locator('.product-grid').evaluate(element => getComputedStyle(element).gridTemplateColumns.split(' ').length)).toBe(1);
+    await expect.poll(() => page.locator('.product-grid').evaluate(element => getComputedStyle(element).gridTemplateColumns.split(' ').length)).toBe(1);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
   }
   await page.getByRole('button', { name: 'Grid view', exact: true }).click();
@@ -378,14 +394,15 @@ test('category and supplier location combine, optional filters use explicit unit
   await login(page, 'buyer');
   await expect(page.locator('.market-hero')).toHaveCount(0);
   await expect(page.getByRole('navigation', { name: 'Main navigation' }).getByRole('button')).toHaveCount(4);
-  await page.getByRole('combobox', { name: 'Category', exact: true }).selectOption('seafood');
+  await page.getByRole('group', { name: 'Browse product categories' }).getByRole('button', { name: 'Seafood', exact: true }).click();
+  await expect(page.getByRole('combobox', { name: 'Category', exact: true })).toHaveValue('seafood');
   await expect(page.locator('.product-card')).toHaveCount(2);
-  await page.getByRole('combobox', { name: 'Location', exact: true }).selectOption({ label: 'Benguet, Cordillera' });
+  await page.getByRole('combobox', { name: 'Supplier location', exact: true }).selectOption({ label: 'Benguet, Cordillera' });
   await expect(page.locator('.product-card')).toHaveCount(0);
   await page.getByRole('button', { name: 'Reset all filters', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Yellowfin tuna', exact: true })).toBeVisible();
   await page.getByRole('combobox', { name: 'Category', exact: true }).selectOption('seafood');
-  await page.getByRole('combobox', { name: 'Location', exact: true }).selectOption({ label: 'General Santos, South Cotabato' });
+  await page.getByRole('combobox', { name: 'Supplier location', exact: true }).selectOption({ label: 'General Santos, South Cotabato' });
   await page.locator('summary').filter({ hasText: 'More filters' }).click();
   await page.getByRole('combobox', { name: 'Order unit', exact: true }).selectOption('kg');
   await page.getByLabel('Maximum price (PHP per kg)', { exact: true }).fill('300');
@@ -399,6 +416,11 @@ test('category and supplier location combine, optional filters use explicit unit
   await expect(page.getByRole('button', { name: 'Yellowfin tuna', exact: true })).toBeVisible();
   const firstProduct = await page.locator('.product-card').first().boundingBox();
   expect(firstProduct!.y).toBeLessThan(700);
+  await page.getByRole('textbox', { name: 'Search products, suppliers or locations' }).fill('Yellowfin');
+  await page.getByRole('search').getByRole('button', { name: 'Search', exact: true }).click();
+  await expect(page.locator('#catalog-results')).toBeFocused();
+  await expect(page.locator('.product-card')).toHaveCount(1);
+  await expect.poll(() => page.locator('.product-card img').evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth > 0)).toBe(true);
 });
 
 test('catalog can load a second page and filter its supplier location', async ({ page }) => {
@@ -415,7 +437,7 @@ test('catalog can load a second page and filter its supplier location', async ({
   await page.getByRole('button', { name: 'Load more products', exact: true }).click();
   await expect(page.locator('.product-card')).toHaveCount(101);
   await expect(page.getByRole('button', { name: 'Load more products', exact: true })).toHaveCount(0);
-  await page.getByRole('combobox', { name: 'Location', exact: true }).selectOption('Palawan test landing');
+  await page.getByRole('combobox', { name: 'Supplier location', exact: true }).selectOption('Palawan test landing');
   await expect(page.locator('.product-card')).toHaveCount(1);
   await expect(page.locator('.product-card')).toContainText('Catalog pagination fixture 100');
 });

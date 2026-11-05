@@ -1,0 +1,69 @@
+{
+  "recordedAt": "2026-11-05T04:00:12.465837+00:00",
+  "cause": "Synthetic rapid account switching on one loopback IP exceeded the real 300 API requests per minute cap. Six HTTP 429 responses captured, including payment POST.",
+  "remediation": "Pace test identity switches by 12 seconds. Keep real server limiter and assertions unchanged.",
+  "scenarios": [
+    {
+      "scenario": "login and five role landing pages have no automated WCAG AA violations",
+      "responses": 129,
+      "statuses": {
+        "401": 6,
+        "200": 119,
+        "204": 4
+      },
+      "rateLimitedRequests": []
+    },
+    {
+      "scenario": "buyer search, cold filters, source details, keyboard dialog and mobile layout",
+      "responses": 34,
+      "statuses": {
+        "401": 1,
+        "200": 33
+      },
+      "rateLimitedRequests": []
+    },
+    {
+      "scenario": "supplier publishes and edits a lot; buyer orders; supplier fulfills; carrier delivers; buyer settles",
+      "responses": 171,
+      "statuses": {
+        "401": 4,
+        "200": 155,
+        "201": 3,
+        "204": 3,
+        "429": 6
+      },
+      "rateLimitedRequests": [
+        {
+          "path": "/api/v1/analytics",
+          "status": 429,
+          "method": "GET"
+        },
+        {
+          "path": "/api/v1/orders",
+          "status": 429,
+          "method": "GET"
+        },
+        {
+          "path": "/api/v1/rfqs",
+          "status": 429,
+          "method": "GET"
+        },
+        {
+          "path": "/api/v1/disputes",
+          "status": 429,
+          "method": "GET"
+        },
+        {
+          "path": "/api/v1/agreements",
+          "status": 429,
+          "method": "GET"
+        },
+        {
+          "path": "/api/v1/orders/5074930e-a218-4503-ad38-87fe72e92160/payment",
+          "status": 429,
+          "method": "POST"
+        }
+      ]
+    }
+  ]
+}

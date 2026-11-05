@@ -1,0 +1,124 @@
+{
+  "retrieved": "2026-11-05",
+  "records": [
+    {
+      "name": "tomatoes",
+      "file": "Tomato (1).jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:Tomato_(1).jpg",
+      "original": "https://upload.wikimedia.org/wikipedia/commons/3/3c/Tomato_%281%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "download": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3c/Tomato_%281%29.jpg/960px-Tomato_%281%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "artist": "Renee Comet (Photographer)",
+      "license": "Public domain",
+      "description": "<br>\n<dl><dd><b>Title</b> Tomato</dd>\n<dd><b>Description</b> A whole, raw, red tomato with stem.</dd>\n<dd><b>Topics/Categories</b>  Food and Drink</dd>\n<dd><b>Type</b> Color, Photo</dd>\n<dd><b>Source</b> National Cancer Institute</dd></dl>",
+      "bytes": 90014,
+      "asset": "/products/tomatoes.webp",
+      "assetBytes": 26390,
+      "dimensions": {
+        "width": 720,
+        "height": 480
+      },
+      "sha256": "473ad3c5ce2fd05d7ede83dacd2de10e28c35ca2294f207cefdfca3aa4938a0f",
+      "changes": "Resized to 720 pixels wide, EXIF removed, converted to WebP quality 78; CSS crops responsively."
+    },
+    {
+      "name": "mangoes",
+      "file": "Carabao mangoes (Philippines).jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:Carabao_mangoes_(Philippines).jpg",
+      "original": "https://upload.wikimedia.org/wikipedia/commons/f/fb/Carabao_mangoes_%28Philippines%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "download": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fb/Carabao_mangoes_%28Philippines%29.jpg/960px-Carabao_mangoes_%28Philippines%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Obsidian_Soul\" title=\"User:Obsidian Soul\">Obsidian Soul</a>",
+      "license": "CC0",
+      "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+      "description": "Ripe carabao mangoes (Philippines)",
+      "bytes": 113747,
+      "asset": "/products/mangoes.webp",
+      "assetBytes": 29158,
+      "dimensions": {
+        "width": 720,
+        "height": 659
+      },
+      "sha256": "3f47225185ef4282d3a237b12a7d092131a31d06241795cb9a766ba66a186689",
+      "changes": "Resized to 720 pixels wide, EXIF removed, converted to WebP quality 78; CSS crops responsively."
+    },
+    {
+      "name": "rice",
+      "file": "2014 uncooked Thai jasmine rice.jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:2014_uncooked_Thai_jasmine_rice.jpg",
+      "original": "https://upload.wikimedia.org/wikipedia/commons/0/08/2014_uncooked_Thai_jasmine_rice.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "download": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/08/2014_uncooked_Thai_jasmine_rice.jpg/960px-2014_uncooked_Thai_jasmine_rice.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Takeaway\" title=\"User:Takeaway\">Takeaway</a>",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "description": "Thai jasmine rice has a natural fragrance reminiscent of jasmine. In Indonesia, this type of rice is called \"pandan rice\" as it is there associated with the fragrance of screwpine leaves.\nThe colour balance of this image was correctly established as to show the exact colour of the rice.",
+      "bytes": 155134,
+      "asset": "/products/rice.webp",
+      "assetBytes": 38400,
+      "dimensions": {
+        "width": 720,
+        "height": 720
+      },
+      "sha256": "931051f86c91aa54373b6478ae4f46dd5cbbd8fb4b5d0285877fb52239d2b7ad",
+      "changes": "Resized to 720 pixels wide, EXIF removed, converted to WebP quality 78; CSS crops responsively."
+    },
+    {
+      "name": "shrimp",
+      "file": "2884Whiteleg shrimp in the Philippines textures 08.jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:2884Whiteleg_shrimp_in_the_Philippines_textures_08.jpg",
+      "original": "https://upload.wikimedia.org/wikipedia/commons/7/72/2884Whiteleg_shrimp_in_the_Philippines_textures_08.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "download": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/72/2884Whiteleg_shrimp_in_the_Philippines_textures_08.jpg/960px-2884Whiteleg_shrimp_in_the_Philippines_textures_08.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Judgefloro\" title=\"User:Judgefloro\">Judgefloro</a>",
+      "license": "CC0",
+      "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+      "description": "Whiteleg shrimp in the Philippines textures <a href=\"https://en.wikipedia.org/wiki/en:_Whiteleg_shrimp\" class=\"extiw\" title=\"w:en: Whiteleg shrimp\"> Whiteleg shrimp</a> \"(Litopenaeus vannamei, formerly Penaeus vannamei), also known as Pacific white shrimp or King prawn\" <a rel=\"nofollow\" class=\"external text\" href=\"https://www.bfar.da.gov.ph/LAW?fi=382\">Pacific White Shrimp</a> <a rel=\"nofollow\" class=\"external text\" href=\"https://www.marinespecies.org/aphia.php?p=taxdetails&amp;id=377748\">(Penaeus vannamei)</a>",
+      "bytes": 148163,
+      "asset": "/products/shrimp.webp",
+      "assetBytes": 42126,
+      "dimensions": {
+        "width": 720,
+        "height": 540
+      },
+      "sha256": "5769510ab0beebedbd42d820d5c5c7b26968877021021d4bc5a73728769168df",
+      "changes": "Resized to 720 pixels wide, EXIF removed, converted to WebP quality 78; CSS crops responsively."
+    },
+    {
+      "name": "tuna",
+      "file": "Yellowfin tuna.jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:Yellowfin_tuna.jpg",
+      "original": "https://upload.wikimedia.org/wikipedia/commons/c/c3/Yellowfin_tuna.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "download": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c3/Yellowfin_tuna.jpg/960px-Yellowfin_tuna.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "artist": "William B. Folsom, NMFS",
+      "license": "Public domain",
+      "description": "Yellowfin tuna caught off Nags Head, North Carolina",
+      "bytes": 173162,
+      "asset": "/products/tuna.webp",
+      "assetBytes": 61426,
+      "dimensions": {
+        "width": 720,
+        "height": 476
+      },
+      "sha256": "c09a2d71be9e5d18c2285cafeb28304021cb1ed3e0e1c0ecbfeb46d09e58a7e2",
+      "changes": "Resized to 720 pixels wide, EXIF removed, converted to WebP quality 78; CSS crops responsively."
+    },
+    {
+      "name": "lettuce",
+      "file": "Stack of romaine lettuce heads.jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:Stack_of_romaine_lettuce_heads.jpg",
+      "original": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Stack_of_romaine_lettuce_heads.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "download": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4e/Stack_of_romaine_lettuce_heads.jpg/960px-Stack_of_romaine_lettuce_heads.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "artist": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:Veronicasgardentracker&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:Veronicasgardentracker (page does not exist)\">Jeffery Martin</a>",
+      "license": "CC0",
+      "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+      "description": "Romaine lettuce heads in stack at grocery store.",
+      "bytes": 211781,
+      "asset": "/products/lettuce.webp",
+      "assetBytes": 73020,
+      "dimensions": {
+        "width": 720,
+        "height": 540
+      },
+      "sha256": "ec9ea97b664a84eb4042156242b86c9eaf19d61926fce02d20f2405996525d7f",
+      "changes": "Resized to 720 pixels wide, EXIF removed, converted to WebP quality 78; CSS crops responsively."
+    }
+  ],
+  "totalAssetBytes": 270520
+}

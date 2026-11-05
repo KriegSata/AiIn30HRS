@@ -1,38 +1,39 @@
 {
   "url": "http://127.0.0.1:3100/",
-  "timestamp": "2026-11-05T03:52:23.526Z",
+  "timestamp": "2026-11-05T04:06:56.017Z",
   "violations": [],
   "passes": [
     "aria-allowed-attr",
     "aria-conditional-attr",
-    "aria-deprecated-role",
     "aria-hidden-body",
     "aria-hidden-focus",
     "aria-prohibited-attr",
-    "aria-required-attr",
-    "aria-roles",
     "aria-valid-attr-value",
     "aria-valid-attr",
+    "avoid-inline-spacing",
     "button-name",
     "color-contrast",
     "definition-list",
     "dlitem",
     "duplicate-id-aria",
     "form-field-multiple-labels",
+    "image-alt",
     "label",
     "meta-viewport",
-    "nested-interactive",
-    "svg-img-alt"
+    "nested-interactive"
   ],
   "incomplete": [
     {
       "id": "color-contrast",
       "nodes": [
         [
-          ".detail-visual > p:nth-child(3)"
+          ".detail-visual > .product-art.product-photo > .representative-image"
         ],
         [
           ".detail-visual > .small-copy.muted"
+        ],
+        [
+          ".entity-form > .small-copy.muted"
         ]
       ]
     }

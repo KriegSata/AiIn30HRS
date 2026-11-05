@@ -1,6 +1,6 @@
 {
   "url": "http://127.0.0.1:3100/",
-  "timestamp": "2026-11-05T03:52:06.947Z",
+  "timestamp": "2026-11-05T04:06:07.566Z",
   "violations": [],
   "passes": [
     "aria-allowed-attr",
@@ -20,6 +20,8 @@
     "duplicate-id-aria",
     "html-has-lang",
     "html-lang-valid",
+    "image-alt",
+    "label-content-name-mismatch",
     "link-name",
     "meta-viewport",
     "nested-interactive",

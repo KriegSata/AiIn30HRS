@@ -51,4 +51,4 @@ The original finding descriptions below preserve the audited behavior. Principal
 5. If documents are enabled, first add private object access, format/size limits, quarantine/scanning, expiring authorized downloads, and a retention policy. Keep the absent capability disabled until then.
 6. Record successful final browser tests, dependency/secret scan, container build/start and load evidence; reviewed CI YAML is not evidence of a completed CI run. The web response configuration has basic headers but no tested application CSP yet.
 
-Principal local-demo signoff: **PENDING final remediation evidence**. Principal commercial signoff: **NOT APPROVED**. See [checklist](security-checklist.md), [threat model](security-threat-model.md), and [operations limitations](operations.md).
+Principal local-demo signoff: **APPROVED for the local sandbox MVP — 2026-11-05**. Principal commercial signoff: **NOT APPROVED**. See [checklist](security-checklist.md), [threat model](security-threat-model.md), and [operations limitations](operations.md).

@@ -1,4 +1,21 @@
+// Representative photographs apply only to these seeded demo products.
+// New supplier listings keep the illustration fallback until uploads are implemented.
+// Source attribution and licenses: /products/credits.html and docs/image-credits.md.
+const demoProductPhotos: Record<string, { file: string; height: number; credit: string }> = {
+  'Vine-ripened tomatoes': { file: 'tomatoes', height: 480, credit: 'Renee Comet / National Cancer Institute; public domain' },
+  'Golden carabao mangoes': { file: 'mangoes', height: 659, credit: 'Obsidian Soul; CC0 1.0' },
+  'Premium jasmine rice': { file: 'rice', height: 720, credit: 'Takeaway; CC BY-SA 4.0; resized and WebP converted' },
+  'Fresh whiteleg shrimp': { file: 'shrimp', height: 540, credit: 'Judgefloro; CC0 1.0' },
+  'Yellowfin tuna': { file: 'tuna', height: 476, credit: 'William B. Folsom / NMFS; public domain' },
+  'Crisp romaine lettuce': { file: 'lettuce', height: 540, credit: 'Jeffery Martin; CC0 1.0' },
+};
+
 export function ProductArt({ title, category, small = false }: { title: string; category: string; small?: boolean }) {
+  const photo = Object.hasOwn(demoProductPhotos, title) ? demoProductPhotos[title] : undefined;
+  if (photo) return <span className={`product-art product-photo ${small ? 'small' : ''}`} style={{ position: 'relative', overflow: 'hidden', background: '#f4f4f4' }}>
+    <img className="product-photo-image" src={`/products/${photo.file}.webp`} alt={`${title} — representative product photo`} title={`${photo.credit}. Representative product, not the supplier's actual stock. Photo credits: /products/credits.html`} width={720} height={photo.height} loading="lazy" decoding="async" style={{ position: 'absolute', inset: 0, display: 'block', width: '100%', height: '100%', objectFit: 'cover' }}/>
+    {!small && <span className="representative-image" style={{ position: 'absolute', right: 8, bottom: 8, padding: '3px 6px', background: 'rgba(255,255,255,.94)', color: '#333', fontSize: 10, lineHeight: 1.4, borderRadius: 2 }}>Representative image</span>}
+  </span>;
   const type = /tomato/i.test(title) ? 'tomato' : /mango/i.test(title) ? 'mango' : /rice/i.test(title) ? 'rice' : /shrimp|prawn/i.test(title) ? 'shrimp' : category === 'seafood' ? 'fish' : 'lettuce';
   const backgrounds: Record<string, string> = { tomato: '#f1e9dd', mango: '#f1edda', rice: '#efeae1', shrimp: '#f4e8df', fish: '#e4eceb', lettuce: '#e6ecdf' };
   return <svg className={`product-art ${small ? 'small' : ''}`} viewBox="0 0 400 240" role="img" aria-label={`${title} illustration`} style={{ background: backgrounds[type] }}>

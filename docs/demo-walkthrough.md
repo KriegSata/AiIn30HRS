@@ -2,7 +2,7 @@
 
 Start the application and obtain the local password as described in [START_HERE](../START_HERE.md). All examples use synthetic Philippine organizations and PHP.
 
-1. Sign in as buyer. Choose Seafood and General Santos in the category/location controls. Search for yellowfin tuna, inspect its lot and temperature requirements, then reset filters. Open Business tools for analytics and other secondary screens.
+1. Sign in as buyer. The storefront has a main search, horizontal business navigation, and a product comparison grid. Choose Seafood under Category and General Santos under Supplier location. Search for yellowfin tuna, compare its price and minimum order, then open the product to inspect its lot and temperature requirements. Reset filters to return to all products. Open Business tools for analytics and other secondary screens. On mobile, open the menu button for navigation.
 2. Sign out and sign in as supplier. Add a produce listing with an expiry beyond your planned delivery. Note its title and lot code.
 3. As buyer, find that listing and submit a quantity meeting its minimum. The order starts pending confirmation.
 4. As supplier, confirm the order, start preparation, mark it ready, and schedule CoolMove Logistics for collection.
