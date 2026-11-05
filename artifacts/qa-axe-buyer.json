@@ -1,6 +1,6 @@
 {
   "url": "http://127.0.0.1:3100/",
-  "timestamp": "2026-11-05T04:05:55.089Z",
+  "timestamp": "2026-11-05T06:05:58.188Z",
   "violations": [],
   "passes": [
     "aria-allowed-attr",
@@ -29,30 +29,29 @@
     "meta-viewport",
     "nested-interactive",
     "select-name",
-    "summary-name",
-    "svg-img-alt"
+    "summary-name"
   ],
   "incomplete": [
     {
       "id": "color-contrast",
       "nodes": [
         [
-          "article:nth-child(1) > .product-image-button > .product-photo.product-art > .representative-image"
+          "article:nth-child(1) > .product-image-button > .product-art.product-photo > .representative-image"
         ],
         [
-          "article:nth-child(2) > .product-image-button > .product-photo.product-art > .representative-image"
+          "article:nth-child(2) > .product-image-button > .product-art.product-photo > .representative-image"
         ],
         [
-          "article:nth-child(3) > .product-image-button > .product-photo.product-art > .representative-image"
+          "article:nth-child(3) > .product-image-button > .product-art.product-photo > .representative-image"
         ],
         [
-          "article:nth-child(4) > .product-image-button > .product-photo.product-art > .representative-image"
+          "article:nth-child(4) > .product-image-button > .product-art.product-photo > .representative-image"
         ],
         [
-          "article:nth-child(5) > .product-image-button > .product-photo.product-art > .representative-image"
+          "article:nth-child(5) > .product-image-button > .product-art.product-photo > .representative-image"
         ],
         [
-          "article:nth-child(7) > .product-image-button > .product-photo.product-art > .representative-image"
+          "article:nth-child(6) > .product-image-button > .product-art.product-photo > .representative-image"
         ]
       ]
     }

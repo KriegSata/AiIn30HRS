@@ -1,6 +1,6 @@
 # Verification report
 
-Recorded 5 November 2026, Asia/Manila. The final combined browser run **passed all 10 scenarios**, with zero failures, skips, or flaky results, in 5.5 minutes. The latest TypeScript/Next.js build and all seven accessibility scans passed. The Principal approved the local MVP demo, including the Alibaba-style sourcing storefront, after reviewing these results. Commercial release remains unapproved.
+Recorded 5 November 2026, Asia/Manila. The storefront integration browser run **passed all 10 scenarios**, with zero failures, skips, or flaky results, in 5.5 minutes. The subsequent compact login revision passed a fresh build, the five-role sign-in/accessibility scenario, and targeted layout, registration, and error checks described below. The Principal approved the local MVP demo after reviewing these results. Commercial release remains unapproved.
 
 ## Executed checks
 
@@ -11,6 +11,7 @@ Recorded 5 November 2026, Asia/Manila. The final combined browser run **passed a
 | OpenAPI | **Passed**: contract v1.0.3, 38 operations, 40 schemas | `npm run check:contracts`; [specification](../contracts/openapi.yaml), [validator](../scripts/check-contracts.mjs) |
 | TypeScript and builds | **Passed**; final Next.js build exited 0 after label corrections and includes the sourcing storefront, photos, filters, and pagination | `npm run typecheck`, `npm run build:api`, `npm run build:web`; Principal-observed command results |
 | Browser acceptance | **10 passed, 0 failed, 0 skipped, 0 flaky**; exit 0, 329.96 seconds | `npm run test:e2e -- --max-failures=1`; [final Playwright JSON](../artifacts/qa-e2e-report.json), [scenarios](../tests/e2e/marketplace.spec.ts) |
+| Compact login revision | **Passed**: fresh build, sign-in for five roles, four viewport sizes, keyboard order, demo selection, registration reachability, and invalid-credential feedback | [targeted role report](../artifacts/qa-login-roles-report.json), [layout and interaction checks](../artifacts/qa-login-layout.json), [desktop](../artifacts/login-desktop.png), [mobile](../artifacts/login-mobile.png) |
 | Automated accessibility | **Seven scans, zero violations**: login, five demo role landing pages, and product dialog | axe WCAG A/AA checks within browser tests; [login result](../artifacts/qa-axe-login.json), [buyer result](../artifacts/qa-axe-buyer.json), [dialog result](../artifacts/qa-axe-product-dialog.json), remaining `artifacts/qa-axe-*.json` |
 | Native PostgreSQL | **5 passed** on the final API revision, PostgreSQL 18.6 | `npm run test:native`; [current native report](../artifacts/native-postgres-report.json), generated 11:48 Asia/Manila |
 | Spatial migrations | **5 passed** using the experimental PGlite PostGIS extension | `npm run test:spatial`; [spatial report](../artifacts/spatial-report.json) |
@@ -27,6 +28,8 @@ The current native PostgreSQL checks cover concurrent retry deduplication, chang
 The bounded local load measured p95 latency of **89.84 ms for search**, **271.63 ms for order creation**, and **53.23 ms for idempotent replay**. This was a local development API with embedded PostgreSQL, not k6 or a production capacity test. Authentication and cleanup were outside the latency measurements. The current successful dependency audit supersedes the earlier network-blocked attempt; it reports known registry findings at execution time and is not a guarantee against unknown vulnerabilities.
 
 ## Browser findings
+
+The login follow-up replaces the split green marketing panel with one centered orange/white/charcoal form. The default sign-in view fits 1440 × 900, 1366 × 768, 390 × 844, and 360 × 640 without either scroll direction. Expanded content and registration can scroll naturally. The existing five-role browser scenario was rerun with `--grep 'login and five role'`; its JSON was saved separately to preserve the earlier full-suite evidence. Mobile sign-in and registration axe scans also reported zero violations. Authentication handlers and all 953 shared CSS selector/declaration entries were independently reviewed as unchanged. The entire ten-scenario suite was not repeated for this presentation-only follow-up.
 
 The current storefront uses prominent product search, category shortcuts, sourcing filters, product photos, unit prices, minimum quantities, and supplier details. It retains grid/list views, pagination, product traceability dialogs, and the role workspaces. The six representative photos total 270,520 bytes, load locally, and have visible representative-image labels and accessible alt text. Attribution is linked from the application footer; unknown/new titles retain the illustration fallback.
 

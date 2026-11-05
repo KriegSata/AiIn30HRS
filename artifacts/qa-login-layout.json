@@ -1,0 +1,51 @@
+{
+  "checkedAt": "2026-11-05T06:07:41.929Z",
+  "viewports": [
+    {
+      "width": 1440,
+      "height": 900,
+      "documentWidth": 1440,
+      "documentHeight": 900,
+      "buttonColor": "rgb(185, 71, 0)"
+    },
+    {
+      "width": 1366,
+      "height": 768,
+      "documentWidth": 1366,
+      "documentHeight": 768,
+      "buttonColor": "rgb(185, 71, 0)"
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "documentWidth": 390,
+      "documentHeight": 844,
+      "buttonColor": "rgb(185, 71, 0)"
+    },
+    {
+      "width": 360,
+      "height": 640,
+      "documentWidth": 360,
+      "documentHeight": 640,
+      "buttonColor": "rgb(185, 71, 0)"
+    }
+  ],
+  "checks": [
+    "Email-password-submit keyboard order",
+    "Demo choice changes email without authenticating",
+    "Registration fields retained; natural scrolling reaches submit at 360px",
+    "Invalid credentials show accessible error and re-enable submit"
+  ],
+  "accessibility": [
+    {
+      "screen": "mobile sign in",
+      "violations": []
+    },
+    {
+      "screen": "mobile registration",
+      "violations": []
+    }
+  ],
+  "passed": true,
+  "completedAt": "2026-11-05T06:08:13.535Z"
+}

@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description: 'A traceable wholesale marketplace connecting farms, fishing communities, and your business.',
   manifest: '/manifest.webmanifest',
 };
-export const viewport: Viewport = { width: 'device-width', initialScale: 1, themeColor: '#163f32' };
+export const viewport: Viewport = { width: 'device-width', initialScale: 1, themeColor: '#b94700' };
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return <html lang="en"><body><a className="skip-link" href="#main">Skip to content</a>{children}</body></html>;
 }

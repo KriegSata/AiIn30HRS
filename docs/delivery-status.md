@@ -2,6 +2,8 @@
 
 Date: 2026-11-05, Asia/Manila. **Principal approval: local MVP demo accepted**, including the requested Alibaba-style sourcing storefront with representative product photos. The final combined browser suite passed all ten scenarios; the latest build, TypeScript checks, and seven accessibility scans passed. Commercial release is not approved; production startup is disabled.
 
+Login follow-up accepted: a compact single-screen form now uses the storefront's orange/white/charcoal palette. Fresh build, five-role sign-in/accessibility checks, and targeted desktop/mobile layout, registration, and error checks passed. See the [verification report](test-report.md) for these follow-up results separately from the earlier ten-scenario run.
+
 | Requested deliverable | Artifact and present state |
 | --- | --- |
 | Architecture and decisions | [architecture](architecture.md), [decisions](decisions.md), [integration amendments](integration-log.md) |

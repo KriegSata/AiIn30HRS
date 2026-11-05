@@ -1,6 +1,6 @@
 {
   "url": "http://127.0.0.1:3100/",
-  "timestamp": "2026-11-05T04:05:53.445Z",
+  "timestamp": "2026-11-05T06:05:56.254Z",
   "violations": [],
   "passes": [
     "aria-allowed-attr",
@@ -18,13 +18,15 @@
     "bypass",
     "color-contrast",
     "document-title",
+    "duplicate-id-aria",
     "form-field-multiple-labels",
     "html-has-lang",
     "html-lang-valid",
     "label",
     "link-name",
     "meta-viewport",
-    "nested-interactive"
+    "nested-interactive",
+    "summary-name"
   ],
   "incomplete": []
 }
