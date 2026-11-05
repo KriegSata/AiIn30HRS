@@ -1,0 +1,27 @@
+{
+  "runtime": "PostgreSQL 18.6 on x86_64-windows, compiled by msvc-19.44.35228, 64-bit",
+  "generatedAt": "2026-11-05T02:53:35.387Z",
+  "spatialExtensionTested": false,
+  "tests": [
+    {
+      "name": "12 concurrent retries create one order and reserve once",
+      "passed": true
+    },
+    {
+      "name": "idempotency reuse with different content is rejected",
+      "passed": true
+    },
+    {
+      "name": "competing transactions cannot oversell the final stock",
+      "passed": true
+    },
+    {
+      "name": "native deferred ledger constraint rejects unbalanced postings",
+      "passed": true
+    },
+    {
+      "name": "native append-only audit rejects destructive changes",
+      "passed": true
+    }
+  ]
+}

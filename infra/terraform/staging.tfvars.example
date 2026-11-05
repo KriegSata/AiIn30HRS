@@ -1,0 +1,12 @@
+environment            = "staging"
+aws_region             = "ap-southeast-1"
+availability_zones     = ["ap-southeast-1a", "ap-southeast-1b"]
+vpc_cidr               = "10.42.0.0/16"
+ui_origin              = "https://staging.your-domain.example"
+allowed_ingress_cidrs  = ["203.0.113.0/24"] # Replace with your organization's VPN CIDRs.
+certificate_arn        = "arn:aws:acm:ap-southeast-1:ACCOUNT_ID:certificate/CERTIFICATE_ID"
+api_image              = "ACCOUNT_ID.dkr.ecr.ap-southeast-1.amazonaws.com/harvestlink-api@sha256:REPLACE_WITH_64_HEX_DIGEST"
+web_image              = "ACCOUNT_ID.dkr.ecr.ap-southeast-1.amazonaws.com/harvestlink-web@sha256:REPLACE_WITH_64_HEX_DIGEST"
+database_secret_arn    = "arn:aws:secretsmanager:ap-southeast-1:ACCOUNT_ID:secret:harvestlink-staging-runtime-database-SECRET_ID"
+jwt_secret_arn         = "arn:aws:secretsmanager:ap-southeast-1:ACCOUNT_ID:secret:harvestlink-staging-jwt-SECRET_ID"
+alert_topic_arn        = "arn:aws:sns:ap-southeast-1:ACCOUNT_ID:harvestlink-staging-alerts"

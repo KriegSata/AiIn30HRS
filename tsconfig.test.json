@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "dist/tests",
+    "sourceMap": true,
+    "inlineSources": true
+  },
+  "include": ["apps/api/src/**/*.ts", "apps/api/test/**/*.ts", "db/**/*.ts", "contracts/domain.ts"]
+}

@@ -1,0 +1,100 @@
+name: Verify marketplace
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  application:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgis/postgis:17-3.5
+        env:
+          POSTGRES_DB: harvestlink_native_test
+          POSTGRES_USER: ci_test
+          POSTGRES_PASSWORD: ci-only-disposable-password
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd 'pg_isready -U ci_test -d harvestlink_native_test'
+          --health-interval 5s --health-timeout 5s --health-retries 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npm run setup
+      - run: npm run check:contracts
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run test:coverage
+      - name: Enforce core coverage gate
+        run: npx c8 check-coverage --lines 80 --branches 80
+      - run: npm run test:native
+        env:
+          TEST_DATABASE_URL: postgresql://ci_test:ci-only-disposable-password@127.0.0.1:5432/harvestlink_native_test
+      - name: Verify PostGIS migration on native server
+        run: psql "$TEST_DATABASE_URL" -v ON_ERROR_STOP=1 -f db/migrations/002_postgis.sql -c 'SELECT PostGIS_Version();'
+        env:
+          TEST_DATABASE_URL: postgresql://ci_test:ci-only-disposable-password@127.0.0.1:5432/harvestlink_native_test
+      - run: npm run build
+      - run: npm audit --omit=dev --audit-level=high
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: verification-evidence
+          path: |
+            coverage/
+            playwright-report/
+            test-results/
+            artifacts/*report.json
+          retention-days: 14
+  containers:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node scripts/setup.mjs
+      - name: Validate Compose without displaying secrets
+        run: docker compose config --quiet
+        env:
+          COMPOSE_DB_PASSWORD: ci-only-disposable-password
+      - name: Build API and web containers
+        run: docker compose build
+        env:
+          COMPOSE_DB_PASSWORD: ci-only-disposable-password
+      - name: Start local demonstration
+        run: docker compose up -d --wait --wait-timeout 120
+        env:
+          COMPOSE_DB_PASSWORD: ci-only-disposable-password
+      - name: Verify readiness
+        run: |
+          curl --fail http://localhost:3000/ --output /dev/null
+          curl --fail http://localhost:4000/api/v1/health
+      - name: Stop services while preserving no CI data
+        if: always()
+        run: docker compose down --volumes
+        env:
+          COMPOSE_DB_PASSWORD: ci-only-disposable-password
+  infrastructure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: '1.13.5'
+      - run: terraform -chdir=infra/terraform init -backend=false -input=false
+      - run: terraform -chdir=infra/terraform validate

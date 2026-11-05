@@ -1,0 +1,80 @@
+name: harvestlink
+services:
+  postgres:
+    image: postgis/postgis:17-3.5
+    environment:
+      POSTGRES_DB: harvestlink
+      POSTGRES_USER: harvestlink_demo
+      POSTGRES_PASSWORD: ${COMPOSE_DB_PASSWORD:?Set COMPOSE_DB_PASSWORD to a random hex value}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U harvestlink_demo -d harvestlink']
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks: [data]
+    restart: unless-stopped
+  redis:
+    image: redis:7.4-alpine
+    command: [redis-server, --appendonly, 'yes']
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: [CMD, redis-cli, ping]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks: [data]
+    restart: unless-stopped
+  api:
+    build:
+      context: .
+      target: api
+    env_file: [.env.local]
+    environment:
+      NODE_ENV: development
+      API_HOST: 0.0.0.0
+      API_PORT: '4000'
+      UI_ORIGIN: http://localhost:3000
+      DEMO_MODE: 'true'
+      SEED_DEMO: 'true'
+      DATABASE_URL: postgresql://harvestlink_demo:${COMPOSE_DB_PASSWORD:?Set COMPOSE_DB_PASSWORD}@postgres:5432/harvestlink
+      REDIS_URL: redis://redis:6379
+    ports:
+      - '127.0.0.1:4000:4000'
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks: [data, app]
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    init: true
+    restart: unless-stopped
+  web:
+    build:
+      context: .
+      target: web
+      args:
+        API_INTERNAL_URL: http://api:4000
+    environment:
+      API_INTERNAL_URL: http://api:4000
+    ports:
+      - '127.0.0.1:3000:3000'
+    depends_on:
+      api:
+        condition: service_healthy
+    networks: [app]
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    init: true
+    restart: unless-stopped
+networks:
+  app: {}
+  data:
+    internal: true
+volumes:
+  postgres-data: {}
+  redis-data: {}

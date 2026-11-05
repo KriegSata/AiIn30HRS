@@ -1,0 +1,20 @@
+name: Release review gate
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        type: choice
+        options: [staging, production]
+        required: true
+permissions:
+  contents: read
+jobs:
+  release-gate:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.target }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce incomplete commercial release boundary
+        run: |
+          echo '::error::Hosted deployment is blocked: production API startup is disabled. Resolve docs/operations.md release gates before adding a deployment job.'
+          exit 1

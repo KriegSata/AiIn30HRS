@@ -1,0 +1,7 @@
+# Create the encrypted, versioned state bucket separately. Do not put credentials here.
+bucket       = "YOUR_ORGANIZATION_TERRAFORM_STATE_BUCKET"
+key          = "harvestlink/staging.tfstate"
+region       = "ap-southeast-1"
+encrypt      = true
+use_lockfile = true
+# Use a separate key and access policy for production. Supply a state KMS key if required.
