@@ -1,4 +1,4 @@
-/** HarvestLink MVP contract, version 1.0.3. Monetary values are integer PHP centavos.
+/** HarvestLink MVP contract, version 1.0.4. Monetary values are integer PHP centavos.
  * Quantities are positive decimal strings with at most three fractional digits.
  * UUIDs identify records; UTC ISO-8601 strings identify instants. No Date objects on the wire.
  */

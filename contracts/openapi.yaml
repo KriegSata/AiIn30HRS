@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "HarvestLink Marketplace API",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "description": "Frozen MVP contract. All amounts integer PHP centavos; quantities decimal strings. Demo currency is not a launch-country decision. All business routes require JWT; ownership checked server-side. Responses use {data}, paginated lists {data,meta}, errors {error}. Additional request properties rejected. See docs/architecture.md for state-machine and security invariants."
   },
   "servers": [
@@ -1510,10 +1510,34 @@
               "enum": [
                 "newest",
                 "price_asc",
-                "freshness"
+                "freshness",
+                "popular",
+                "nearest"
               ]
             },
-            "description": ""
+            "description": "popular ranks by distinct completed orders with released payments, then harvest date and listing ID. nearest requires latitude/longitude and ranks by approximate supplier listing location, then popularity, harvest date, and ID. Ranking precedes pagination."
+          },
+          {
+            "in": "query",
+            "name": "latitude",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "minimum": -90,
+              "maximum": 90
+            },
+            "description": "Optional current buyer location for nearest sorting only. Both coordinates are required for nearest. Used transiently; not saved to the account."
+          },
+          {
+            "in": "query",
+            "name": "longitude",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "minimum": -180,
+              "maximum": 180
+            },
+            "description": "Optional current buyer location for nearest sorting only. Both coordinates are required for nearest. Used transiently; not saved to the account."
           }
         ]
       },

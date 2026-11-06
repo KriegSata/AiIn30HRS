@@ -5,6 +5,7 @@ import { io } from 'socket.io-client';
 import type { Agreement, Analytics, AuditEvent, CreateOrderRequest, Dispute, Listing, Order, Organization, Partner, Payment, Rfq, Session, Shipment, TemperatureReading } from '../../../contracts/domain';
 import { accessToken, api, ApiFailure, beginLocalSignOut, revokePendingSignOut, onSession, refreshSession, setSession } from '../lib/api';
 import { clearPrivateData, discardOrder, drainOrders, enqueueOrder, pendingOrders, type PendingOrder } from '../lib/offline';
+import { useMarketplaceLocation } from '../lib/use-marketplace-location';
 import { ProductArt } from '../components/illustrations';
 import { Badge, date, dayInput, Empty, Field, Loading, Metric, Modal, money, SectionTitle, StateBadge, Submit, words } from '../components/ui';
 import { EntityForm, type FormState } from '../components/forms';
@@ -41,27 +42,53 @@ function Workspace({ session, updateSession }: { session: Session; updateSession
   const role = session.user.role; const [view, setView] = useState<View>(role === 'buyer' ? 'marketplace' : role === 'logistics' ? 'logistics' : role === 'admin' ? 'overview' : 'inventory');
   const [listingPages, setListingPages] = useState(1); const [listingTotal, setListingTotal] = useState(0); const [loadingListings, setLoadingListings] = useState(false);
   const [data, setData] = useState<Data>(initial); const [loading, setLoading] = useState(true); const [loadError, setLoadError] = useState(''); const [notice, setNotice] = useState(''); const [online, setOnline] = useState(true); const [mobile, setMobile] = useState(false); const [form, setForm] = useState<FormState | null>(null); const [selected, setSelected] = useState<Listing | null>(null); const [selectedOrder, setSelectedOrder] = useState<Order | null>(null); const [outbox, setOutbox] = useState<PendingOrder[]>([]); const [showOutbox, setShowOutbox] = useState(false); const [busy, setBusy] = useState(false); const [showAlerts, setShowAlerts] = useState(false); const [help, setHelp] = useState(false); const reloadRef = useRef<() => void>(() => {});
+  const refreshGeneration = useRef(0);
+  const workspaceMounted = useRef(true);
+  const resetListingRanking = useCallback(() => {
+    // Invalidate old requests synchronously, before the location state rerenders.
+    refreshGeneration.current++;
+    setListingPages(1);
+    setListingTotal(0);
+    setLoadingListings(true);
+    setData(previous => ({ ...previous, listings: [] }));
+  }, []);
+  const discovery = useMarketplaceLocation(resetListingRanking);
+  const listingRanking = role === 'buyer' && discovery.position
+    ? `sort=nearest&latitude=${discovery.position.latitude}&longitude=${discovery.position.longitude}`
+    : 'sort=popular';
+  useEffect(() => {
+    workspaceMounted.current = true;
+    return () => { workspaceMounted.current = false; refreshGeneration.current++; };
+  }, []);
   const refresh = useCallback(async () => {
+    if (!workspaceMounted.current) return;
+    const requestGeneration = ++refreshGeneration.current;
+    const current = () => workspaceMounted.current && requestGeneration === refreshGeneration.current;
     setLoadError('');
-    const routes: [keyof Data, string][] = [['listings', `/listings?pageSize=100${role === 'supplier' ? '&mine=true' : role === 'admin' ? '&scope=all' : ''}`], ['shipments', '/shipments?pageSize=100'], ['partners', '/organizations/partners?pageSize=100'], ['analytics', '/analytics']];
+    const routes: [keyof Data, string][] = [['listings', `/listings?pageSize=100&${listingRanking}${role === 'supplier' ? '&mine=true' : role === 'admin' ? '&scope=all' : ''}`], ['shipments', '/shipments?pageSize=100'], ['partners', '/organizations/partners?pageSize=100'], ['analytics', '/analytics']];
     if (role !== 'logistics') routes.push(['orders', '/orders?pageSize=100'], ['rfqs', '/rfqs?pageSize=100'], ['disputes', '/disputes?pageSize=100'], ['agreements', '/agreements?pageSize=100']);
     if (role === 'admin') routes.push(['organizations', '/organizations?pageSize=100'], ['audit', '/audit?pageSize=100']);
     setLoadingListings(true);
+    let nextListingTotal: number | undefined;
     const results = await Promise.allSettled(routes.map(async ([key, path]) => {
       if (key !== 'listings') return api<unknown>(path);
       const listings: Listing[] = [];
       for (let page = 1; page <= listingPages; page++) {
+        if (!current()) return [];
         const response = await api<{ data: Listing[]; meta: { total: number } }>(`${path}&page=${page}`, { envelope: true });
-        listings.push(...response.data); setListingTotal(response.meta.total);
+        if (!current()) return [];
+        listings.push(...response.data); nextListingTotal = response.meta.total;
         if (page * 100 >= response.meta.total) break;
       }
       return [...new Map(listings.map(listing => [listing.id, listing])).values()];
     }));
+    if (!current()) return;
     const patch: Partial<Data> = {}; let failed = 0;
     results.forEach((result, index) => { if (result.status === 'fulfilled') (patch as Record<string, unknown>)[routes[index][0]] = result.value; else failed++; });
+    if (patch.listings && nextListingTotal !== undefined) setListingTotal(nextListingTotal);
     setData(previous => ({ ...previous, ...patch })); setLoading(false); setLoadingListings(false);
     if (failed) setLoadError(`${failed === routes.length ? 'Your workspace could not connect.' : 'Some workspace data could not refresh.'} ${navigator.onLine ? 'Try refreshing in a moment.' : 'You are offline. Saved order submissions will retry when connected.'}`);
-  }, [role, listingPages]);
+  }, [role, listingPages, listingRanking]);
   reloadRef.current = () => { void refresh(); };
   const refreshOutbox = useCallback(async () => { try { setOutbox(await pendingOrders(session.user)); } catch { /* IndexedDB support is checked when submitting. */ } }, [session.user]);
   useEffect(() => { void refresh(); const interval = setInterval(() => { if (navigator.onLine && document.visibilityState === 'visible') void refresh(); }, 30000); return () => clearInterval(interval); }, [refresh]);
@@ -116,7 +143,7 @@ function Workspace({ session, updateSession }: { session: Session; updateSession
         {loadError && <div className="error" role="alert">{loadError}<button className="text-button" onClick={() => void refresh()}>Retry</button></div>}
         {!!outbox.length && <button className="outbox-banner" onClick={() => setShowOutbox(true)}><Clock3 size={18}/><span><strong>{outbox.length} order submission{outbox.length === 1 ? '' : 's'} pending</strong> · {outbox.some(o => o.status !== 'pending') ? 'Some orders need your review.' : 'They will send when your connection is ready.'}</span><ArrowRight size={17}/></button>}
         {loading ? <Loading/> : <>
-          {view === 'marketplace' && <Marketplace listings={data.listings} selected={setSelected} role={role} total={listingTotal} loadingMore={loadingListings} loadMore={() => setListingPages(count => count + 1)}/>}
+          {view === 'marketplace' && <Marketplace listings={data.listings} selected={setSelected} role={role} total={listingTotal} loadingMore={loadingListings} loadMore={() => { refreshGeneration.current++; setListingPages(count => count + 1); }} discovery={role === 'buyer' ? discovery : null}/>}
           {view === 'inventory' && <Inventory listings={data.listings} edit={listing => setForm({ kind: 'editListing', title: 'Edit listing', target: listing })} detail={setSelected}/>}
           {(view === 'overview' || view === 'analytics') && <AnalyticsView data={data} role={role} navigate={navigate} overview={view === 'overview'}/>}
           {(view === 'orders' || view === 'payments') && <OrdersView orders={data.orders} role={role} paymentView={view === 'payments'} busy={busy} detail={setSelectedOrder} form={setForm} action={action}/>}
@@ -140,11 +167,32 @@ function Workspace({ session, updateSession }: { session: Session; updateSession
   </div>;
 }
 
-function Marketplace({ listings, selected, role, total, loadingMore, loadMore }: { listings: Listing[]; selected: (listing: Listing) => void; role: string; total: number; loadingMore: boolean; loadMore: () => void }) {
+function LocationDiscovery({ discovery }: { discovery: ReturnType<typeof useMarketplaceLocation> }) {
+  const compact = discovery.status === 'dismissed';
+  const waiting = discovery.status === 'locating';
+  const enabled = discovery.status === 'enabled';
+  const clear = () => {
+    discovery.usePopular();
+    requestAnimationFrame(() => document.querySelector<HTMLButtonElement>('.location-discovery .discovery-enable')?.focus());
+  };
+  return <section className={`location-discovery ${compact ? 'compact' : ''}`} aria-label="Product recommendations">
+    <MapPin className="discovery-icon" size={22} aria-hidden="true"/>
+    <div className="discovery-copy"><h2>{enabled ? 'Location enabled' : waiting ? 'Finding your location' : compact ? 'Location off' : discovery.status === 'error' ? 'Location unavailable' : 'Find suppliers near you'}</h2>
+      <p role="status" aria-live="polite">{waiting ? 'Waiting for a location reading. You can choose Not now and continue with most popular products.' : discovery.message || 'Enable location to put nearby suppliers first. Otherwise, browse most popular products.'}</p>
+      {discovery.status === 'idle' && <small>Optional, for this visit only. No continuous tracking.</small>}
+    </div>
+    <div className="discovery-actions">{enabled ? <button className="button secondary small" onClick={clear}>Use popular products</button> : <>
+      <button className={`button ${compact ? 'secondary' : 'primary'} small discovery-enable`} onClick={discovery.enable} disabled={waiting}>{waiting && <RefreshCw size={14} className="spin" aria-hidden="true"/>}Enable location</button>
+      {!compact && <button className="text-button" onClick={clear}>Not now</button>}
+    </>}</div>
+  </section>;
+}
+
+function Marketplace({ listings, selected, role, total, loadingMore, loadMore, discovery }: { listings: Listing[]; selected: (listing: Listing) => void; role: string; total: number; loadingMore: boolean; loadMore: () => void; discovery: ReturnType<typeof useMarketplaceLocation> | null }) {
   const [category, setCategory] = useState('all');
   const [location, setLocation] = useState('all');
   const [search, setSearch] = useState('');
-  const [sort, setSort] = useState('fresh');
+  const [sort, setSort] = useState('recommended');
   const [layout, setLayout] = useState('grid');
   const [coldOnly, setColdOnly] = useState(false);
   const [freshness, setFreshness] = useState('any');
@@ -164,12 +212,12 @@ function Marketplace({ listings, selected, role, total, loadingMore, loadMore }:
         && (unit === 'all' || listing.unit === unit)
         && (!maxPrice || unit !== 'all' && listing.pricePerUnitMinor <= Number(maxPrice) * 100)
         && (!maxMinimum || unit !== 'all' && Number(listing.minOrderQuantity) <= Number(maxMinimum));
-    }).sort((a, b) => sort === 'price-low' ? a.pricePerUnitMinor - b.pricePerUnitMinor
+    }).sort((a, b) => sort === 'recommended' ? 0 : sort === 'price-low' ? a.pricePerUnitMinor - b.pricePerUnitMinor
       : sort === 'price-high' ? b.pricePerUnitMinor - a.pricePerUnitMinor
       : sort === 'expires' ? new Date(a.lot.expiresAt).getTime() - new Date(b.lot.expiresAt).getTime()
       : new Date(b.lot.harvestedAt).getTime() - new Date(a.lot.harvestedAt).getTime());
   }, [listings, category, location, search, coldOnly, freshness, unit, maxPrice, maxMinimum, sort]);
-  const changeUnit = (value: string) => { setUnit(value); if (value === 'all') { setMaxPrice(''); setMaxMinimum(''); if (sort.startsWith('price')) setSort('fresh'); } };
+  const changeUnit = (value: string) => { setUnit(value); if (value === 'all') { setMaxPrice(''); setMaxMinimum(''); if (sort.startsWith('price')) setSort('recommended'); } };
   const reset = () => { setCategory('all'); setLocation('all'); setSearch(''); setColdOnly(false); setFreshness('any'); changeUnit('all'); };
   const filters = [
     ...(search.trim() ? [{ id: 'search', label: `Search: ${search.trim()}`, clear: () => setSearch('') }] : []),
@@ -183,6 +231,7 @@ function Marketplace({ listings, selected, role, total, loadingMore, loadMore }:
   ];
   const optionalCount = [freshness !== 'any', unit !== 'all', !!maxPrice, !!maxMinimum, coldOnly].filter(Boolean).length;
   return <section className="marketplace-catalog" aria-label="Product catalog">
+    {discovery && <LocationDiscovery discovery={discovery}/>}
     <div className="catalog-masthead">
       <form className="wholesale-search" role="search" onSubmit={event => { event.preventDefault(); document.getElementById('catalog-results')?.focus({ preventScroll: true }); }}>
         <label htmlFor="catalog-search">Search products, suppliers or locations</label>
@@ -210,10 +259,10 @@ function Marketplace({ listings, selected, role, total, loadingMore, loadMore }:
         </details>
       </aside>
       <div className="catalog-products">
-        <div className="catalog-results" id="catalog-results" tabIndex={-1}><p role="status" aria-live="polite">Showing <strong>{products.length}</strong> of {listings.length} products</p><div><label className="sort-control">Sort by<select value={sort} onChange={event => setSort(event.target.value)} aria-label="Sort products"><option value="fresh">Freshest first</option><option value="expires">Use-by date</option><option value="price-low" disabled={unit === 'all'}>{unit === 'all' ? 'Price: choose a unit first' : `Price / ${unit}: low to high`}</option><option value="price-high" disabled={unit === 'all'}>{unit === 'all' ? 'Price: choose a unit first' : `Price / ${unit}: high to low`}</option></select></label><span className="view-toggle"><button className={layout === 'grid' ? 'selected' : ''} onClick={() => setLayout('grid')} aria-label="Grid view" aria-pressed={layout === 'grid'}><Grid2X2 size={16}/></button><button className={layout === 'list' ? 'selected' : ''} onClick={() => setLayout('list')} aria-label="List view" aria-pressed={layout === 'list'}><List size={18}/></button></span></div></div>
+        <div className="catalog-results" id="catalog-results" tabIndex={-1}><p role="status" aria-live="polite">Showing <strong>{products.length}</strong> of {listings.length} products</p><div><label className="sort-control">Sort by<select value={sort} onChange={event => setSort(event.target.value)} aria-label="Sort products"><option value="recommended">{discovery?.position ? 'Nearest suppliers' : 'Most popular'}</option><option value="fresh">Freshest first</option><option value="expires">Use-by date</option><option value="price-low" disabled={unit === 'all'}>{unit === 'all' ? 'Price: choose a unit first' : `Price / ${unit}: low to high`}</option><option value="price-high" disabled={unit === 'all'}>{unit === 'all' ? 'Price: choose a unit first' : `Price / ${unit}: high to low`}</option></select></label><span className="view-toggle"><button className={layout === 'grid' ? 'selected' : ''} onClick={() => setLayout('grid')} aria-label="Grid view" aria-pressed={layout === 'grid'}><Grid2X2 size={16}/></button><button className={layout === 'list' ? 'selected' : ''} onClick={() => setLayout('list')} aria-label="List view" aria-pressed={layout === 'list'}><List size={18}/></button></span></div></div>
         {!!filters.length && <div className="active-filters" aria-label="Active filters">{filters.map(filter => <button className="filter-chip" key={filter.id} onClick={filter.clear} aria-label={`Remove ${filter.id} filter: ${filter.label}`}><span>{filter.label}</span><X size={14}/></button>)}<button className="text-button reset-filters" onClick={reset}>Reset all filters</button></div>}
         {total > listings.length && <div className="row-between notice catalog-pagination"><span>Filters cover {listings.length} of {total} products loaded so far.</span><button className="button secondary small" disabled={loadingMore} onClick={loadMore}>{loadingMore ? 'Loading products…' : 'Load more products'}</button></div>}
-        {products.length ? <div className={`product-grid ${layout === 'list' ? 'list-layout' : ''}`}>{products.map(listing => <article className="product-card" key={listing.id}>
+        {loadingMore && !listings.length ? <Loading/> : products.length ? <div className={`product-grid ${layout === 'list' ? 'list-layout' : ''}`}>{products.map(listing => <article className="product-card" key={listing.id}>
           <button className="product-image-button" onClick={() => selected(listing)} aria-label={`View ${listing.title} — representative image`}><ProductArt title={listing.title} category={listing.category}/></button>
           <div className="product-body">
             <button className="product-title" onClick={() => selected(listing)}>{listing.title}</button>

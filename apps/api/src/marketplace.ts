@@ -7,6 +7,27 @@ import type { AuthService } from './auth.js';
 const listingSql = `SELECT l.*,o.name supplier_name,o.verification_status supplier_verification,t.code lot_code,t.harvested_at,t.expires_at,t.origin_label,t.origin_latitude,t.origin_longitude,t.catch_method,t.cold_chain_status,t.storage_min_c,t.storage_max_c,t.source_type,t.source_name,t.evidence_type FROM listings l JOIN lots t ON t.id=l.lot_id JOIN organizations o ON o.id=l.supplier_org_id`;
 const orderSql = `SELECT o.*,b.name buyer_name,s.name supplier_name,sh.id shipment_id,sh.logistics_org_id FROM orders o JOIN organizations b ON b.id=o.buyer_org_id JOIN organizations s ON s.id=o.supplier_org_id LEFT JOIN shipments sh ON sh.order_id=o.id`;
 const shipmentSql = `SELECT s.*,o.order_number,o.supplier_org_id,o.buyer_org_id,l.name logistics_name FROM shipments s JOIN orders o ON o.id=s.order_id JOIN organizations l ON l.id=s.logistics_org_id`;
+// Count settled, completed purchases, never quantities or outstanding commercial intent.
+const listingPopularityJoin = ` LEFT JOIN (
+  SELECT i.listing_id,count(DISTINCT i.order_id) AS completed_orders
+  FROM order_items i JOIN orders purchased ON purchased.id=i.order_id
+  JOIN payments settled ON settled.order_id=purchased.id
+  WHERE purchased.status='completed' AND purchased.payment_status='released' AND settled.status='released'
+  GROUP BY i.listing_id
+) popularity ON popularity.listing_id=l.id`;
+function approximateDistance(row: any, latitude: number, longitude: number): number {
+  // Use exactly the public projection, including Math.round's behavior below zero.
+  // The haversine term itself is monotonic with great-circle distance; no units are exposed.
+  const publicLocation = coarse({ latitude: Number(row.latitude), longitude: Number(row.longitude) });
+  const radians = Math.PI / 180;
+  const latitudeTerm = Math.sin((publicLocation.latitude - latitude) * radians / 2) ** 2;
+  const longitudeDelta = ((publicLocation.longitude - longitude + 540) % 360) - 180;
+  const longitudeTerm = Math.sin(longitudeDelta * radians / 2) ** 2;
+  // cos(90 degrees) is mathematically zero. Preserve exact equal-distance ties at
+  // either pole rather than allowing floating-point longitude noise to reorder them.
+  const cosine = (degrees: number) => Math.abs(degrees) === 90 ? 0 : Math.cos(degrees * radians);
+  return Math.max(0, Math.min(1, latitudeTerm + cosine(latitude) * cosine(publicLocation.latitude) * longitudeTerm));
+}
 async function insert(tx: Queryable, table: string, values: Record<string, any>) {
   const entries = Object.entries(values);
   return one(tx, `INSERT INTO ${table}(${entries.map(([k]) => k).join(',')}) VALUES(${entries.map((_, i) => '$' + (i + 1)).join(',')}) RETURNING *`, entries.map(([, v]) => v));
@@ -81,6 +102,14 @@ export class Marketplace {
   }
   async listings(actor: Actor, query: any) {
     if (query.scope === 'all') role(actor, 'admin');
+    const hasLatitude = query.latitude !== undefined, hasLongitude = query.longitude !== undefined;
+    const nearest = query.sort === 'nearest', ranked = nearest || query.sort === 'popular';
+    requireThat(hasLatitude === hasLongitude && (nearest ? hasLatitude : !hasLatitude), 400, 'INVALID_COORDINATES', 'Nearest sorting requires both latitude and longitude; other sorts do not accept coordinates.');
+    const latitude = Number(query.latitude), longitude = Number(query.longitude);
+    if (nearest) requireThat(
+      [query.latitude, query.longitude].every(value => (typeof value === 'number' || typeof value === 'string') && String(value).trim() !== '') &&
+      Number.isFinite(latitude) && Number.isFinite(longitude) && latitude >= -90 && latitude <= 90 && longitude >= -180 && longitude <= 180,
+      400, 'INVALID_COORDINATES', 'Latitude must be within -90 to 90 and longitude within -180 to 180.');
     const mine = query.mine === 'true', all = query.scope === 'all';
     const clauses: string[] = [], values: any[] = [];
     const where = (sql: string, value: any) => { values.push(value); clauses.push(sql.replace('?', '$' + values.length)); };
@@ -89,8 +118,12 @@ export class Marketplace {
     if (query.category) where('l.category=?', query.category);
     if (query.status) where('l.status=?', query.status);
     if (query.search) { requireThat(typeof query.search === 'string' && query.search.length <= 120, 400, 'INVALID_SEARCH', 'Search is too long.'); where("(l.title || ' ' || l.description) ILIKE ?", '%' + query.search + '%'); }
-    const sort = query.sort === 'price_asc' ? 'l.price_per_unit_minor ASC' : query.sort === 'freshness' ? 't.harvested_at DESC' : 'l.created_at DESC';
-    const rows = (await this.db.query(`${listingSql}${clauses.length ? ' WHERE ' + clauses.join(' AND ') : ''} ORDER BY ${sort}`, values)).rows as any[];
+    const sort = ranked ? 'COALESCE(popularity.completed_orders,0) DESC,t.harvested_at DESC,l.id ASC' : query.sort === 'price_asc' ? 'l.price_per_unit_minor ASC' : query.sort === 'freshness' ? 't.harvested_at DESC' : 'l.created_at DESC';
+    const catalogSql = ranked ? listingSql + listingPopularityJoin : listingSql;
+    const rows = (await this.db.query(`${catalogSql}${clauses.length ? ' WHERE ' + clauses.join(' AND ') : ''} ORDER BY ${sort}`, values)).rows as any[];
+    // Stable sorting preserves popularity/harvest/id ties from SQL. Rank every eligible
+    // row before pagination; source coordinates never enter a public response or event.
+    if (nearest) rows.sort((a, b) => approximateDistance(a, latitude, longitude) - approximateDistance(b, latitude, longitude));
     return paginate(rows.map(r => map.listing(r, mine || all)), query);
   }
   async getListing(actor: Actor, id: string, tx: Queryable = this.db, lock = false) {

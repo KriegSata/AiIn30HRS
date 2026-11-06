@@ -222,3 +222,19 @@
 .login-footer{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:13px 32px 17px;font-size:10px;line-height:1.6;color:#686868;flex-shrink:0}
 @media(max-width:520px){.login-header{padding:16px 19px;min-height:66px;gap:12px}.login-header .brand{font-size:24px}.login-header .brand-mark{width:29px;height:29px}.login-environment{font-size:10px}.login-main{padding:20px 16px}.login-card{padding:24px 22px;border-radius:9px}.login-card>h1{font-size:27px}.login-description{font-size:12px;margin:6px 0 20px}.login-card .entity-form{gap:15px}.login-card .field input,.login-card .field select{font-size:16px;min-height:44px}.login-card .field>span{font-size:12px}.login-card .login-submit{font-size:12px;min-height:44px;padding:10px 12px}.login-card .form-grid{grid-template-columns:1fr}.login-switch{font-size:11px;gap:4px;margin-top:17px}.login-switch .text-button{font-size:11px}.login-demo{margin-top:18px;padding-top:13px}.login-demo>summary{font-size:12px}.demo-roles{gap:5px}.demo-roles>button{font-size:9px;padding:9px 2px}.login-footer{font-size:9px;gap:10px;padding:11px 19px 14px}.login-footer>span:last-child{text-align:right}}
 @media(max-height:700px) and (min-width:521px){.login-header{padding-top:14px;padding-bottom:14px;min-height:64px}.login-main{padding-top:18px;padding-bottom:18px}.login-card{padding-top:23px;padding-bottom:23px}.login-footer{padding-top:9px;padding-bottom:12px}}
+
+/* Optional session-only location discovery; no automatic permission request. */
+.location-discovery{display:flex;align-items:center;gap:15px;padding:17px 20px;margin-bottom:18px;background:#fffaf5;border:1px solid #ead5c5;border-radius:7px;min-width:0}
+.discovery-icon{color:#a6460b;flex-shrink:0}
+.discovery-copy{flex:1;min-width:0}
+.discovery-copy>h2{font-size:14px;line-height:1.4;font-weight:650;letter-spacing:0;color:#333}
+.discovery-copy>p{font-size:12px;line-height:1.65;color:#5e5148;margin-top:4px;overflow-wrap:anywhere}
+.discovery-copy>small{display:block;font-size:10px;line-height:1.6;color:#73645a;margin-top:5px}
+.discovery-actions{display:flex;align-items:center;justify-content:flex-end;gap:15px;flex-shrink:0}
+.discovery-actions .button{font-size:12px;min-height:37px;padding:8px 12px;border-radius:6px}
+.discovery-actions .text-button{font-size:12px;min-height:37px;white-space:nowrap;color:#705441;text-decoration:underline}
+.location-discovery.compact{background:#fff;border-color:#e0e0e0;padding:12px 17px}
+.location-discovery.compact .discovery-copy>h2{font-size:12px}
+.location-discovery.compact .discovery-copy>p{font-size:11px;margin-top:2px}
+@media(max-width:760px){.location-discovery{display:grid;grid-template-columns:22px minmax(0,1fr);align-items:start;gap:10px 12px;padding:15px 16px}.discovery-icon{margin-top:1px}.discovery-actions{grid-column:2;justify-content:flex-start;flex-wrap:wrap;gap:14px}.discovery-copy>p{font-size:12px}.discovery-actions .button,.discovery-actions .text-button{font-size:11px;min-height:35px}}
+@media(max-width:520px){.location-discovery{padding:14px 13px;gap:9px 10px;margin-bottom:16px}.discovery-copy>h2{font-size:13px}.discovery-copy>p{font-size:11px}.discovery-copy>small{font-size:10px}.location-discovery.compact{padding:12px 13px}}
