@@ -52,3 +52,7 @@ The original finding descriptions below preserve the audited behavior. Principal
 6. Record successful final browser tests, dependency/secret scan, container build/start and load evidence; reviewed CI YAML is not evidence of a completed CI run. The web response configuration has basic headers but no tested application CSP yet.
 
 Principal local-demo signoff: **APPROVED for the local sandbox MVP — 2026-11-05**. Principal commercial signoff: **NOT APPROVED**. See [checklist](security-checklist.md), [threat model](security-threat-model.md), and [operations limitations](operations.md).
+
+## 6 November 2026 — location discovery review
+
+Location is opt-in, requested once per user action, rounded to two decimals, and retained only in authenticated workspace memory. Cancellation and teardown invalidate late callbacks; ranking changes invalidate late catalog responses. Nearest sorting uses public one-decimal supplier coordinates. API regression tests verify that discovery does not persist coordinates in profiles, audit events, or the outbox. Same-origin geolocation is explicitly allowed by Permissions-Policy; camera and microphone remain disabled. Development request logging excludes catalog URLs. Hosted proxy/APM query redaction remains a deployment gate described in [operations](operations.md).

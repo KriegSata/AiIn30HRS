@@ -1,4 +1,4 @@
-# HarvestLink architecture — contract version 1.0.3
+# HarvestLink architecture — contract version 1.0.4
 
 Approved for MVP implementation by the Principal Agent on 5 November 2026. This document describes intended and required behavior; implementation completion is reported separately with test evidence.
 

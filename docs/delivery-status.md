@@ -45,3 +45,5 @@ Incomplete. The current dashboard supplies descriptive metrics and a labeled bas
 ## Integration limits
 
 Docker is unavailable on this machine. Terraform validation passed but nothing was provisioned, and remote CI has not run. Native database and registry-access checks now have successful execution evidence. The Principal used compiled API/database tests where the sandboxed TypeScript loader could not run. The [verification report](test-report.md) records the exact scope and remaining checks; local results do not establish production capacity, food-safety certification, legal escrow, or field-user acceptance.
+
+Location discovery acceptance (6 November 2026): **complete for the local demo**. All 17 browser scenarios, 36 API/database tests, typecheck, contract validation, and backend/frontend builds passed. Core statement/line coverage is 99.30%. See [test evidence](test-report.md). Optional nearby sorting and completed-purchase popularity are available at http://127.0.0.1:3100. Hosted log redaction and catalog-scale performance remain commercial deployment gates.

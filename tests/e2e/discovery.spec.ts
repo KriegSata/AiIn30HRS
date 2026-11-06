@@ -20,6 +20,34 @@ const catalogResponse = (page: Page, sort: string) => page.waitForResponse(r => 
   return url.pathname === '/api/v1/listings' && url.searchParams.get('sort') === sort && r.ok();
 });
 
+test('discovery ignores cancelled location callbacks and clears location on signout', async ({ page }) => {
+  await page.addInitScript(() => {
+    (window as any).__locationCalls = 0;
+    Object.defineProperty(navigator, 'geolocation', { configurable: true, value: {
+      getCurrentPosition: (success: unknown) => {
+        (window as any).__locationCalls++;
+        (window as any).__locationSuccess = success;
+      },
+    } });
+  });
+  await signIn(page);
+  await page.getByRole('button', { name: 'Enable location', exact: true }).click();
+  await page.getByRole('button', { name: 'Not now', exact: true }).click();
+  await page.evaluate(() => (window as any).__locationSuccess({ coords: { latitude: 6.12, longitude: 125.17 } }));
+  await expect(page.getByRole('combobox', { name: 'Sort products' })).toContainText('Most popular');
+  await page.getByRole('button', { name: 'Enable location', exact: true }).click();
+  const nearby = catalogResponse(page, 'nearest');
+  await page.evaluate(() => (window as any).__locationSuccess({ coords: { latitude: 6.12, longitude: 125.17 } }));
+  await nearby;
+  await expect(page.getByRole('combobox', { name: 'Sort products' })).toContainText('Nearest suppliers');
+  await page.getByRole('button', { name: 'My organization', exact: true }).click();
+  await page.getByRole('button', { name: 'Sign out', exact: true }).click();
+  await expect(page.getByLabel('Work email')).toBeVisible();
+  await signIn(page);
+  await expect(page.getByRole('combobox', { name: 'Sort products' })).toContainText('Most popular');
+  expect(await page.evaluate(() => (window as any).__locationCalls)).toBe(0);
+});
+
 test('discovery uses actual browser consent for nearby ranking and can return to popular', async ({ page, context }) => {
   await context.grantPermissions(['geolocation'], { origin: 'http://127.0.0.1:3100' });
   await context.setGeolocation({ latitude: 6.11641, longitude: 125.17162, accuracy: 500 });

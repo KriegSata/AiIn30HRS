@@ -1,6 +1,6 @@
 # API integration reference
 
-The authoritative contract is [OpenAPI 1.0.3](../contracts/openapi.yaml): 38 operations and 40 schemas. The demo base URL is `http://127.0.0.1:4000/api/v1`; the browser uses the same-origin `/api/v1` proxy at port 3100. [Domain types](../contracts/domain.ts) and [event schemas](../contracts/events.schema.json) accompany it.
+The authoritative contract is [OpenAPI 1.0.4](../contracts/openapi.yaml): 38 operations and 40 schemas. The demo base URL is `http://127.0.0.1:4000/api/v1`; the browser uses the same-origin `/api/v1` proxy at port 3100. [Domain types](../contracts/domain.ts) and [event schemas](../contracts/events.schema.json) accompany it.
 
 ## Authentication and ownership
 
@@ -59,3 +59,10 @@ Socket.IO uses the `/events` namespace, WebSocket transport, the configured Orig
 For an offline order, store the reviewed intent under its owning account. Clear private drafts at signout. A local pending-revocation marker must block cookie-based automatic signin until remote logout succeeds. API/private account responses are not service-worker cache entries.
 
 Rate limits are active in the demo. A `429 RATE_LIMITED` response requires waiting for the one-minute window. Avoid immediate retry loops and full-workspace refetches for every event in a burst. Cloud deployment requires distributed throttling and workers; the current process-local controls are not a scaling design.
+
+
+## Discovery ranking (1.0.4)
+
+`GET /listings?sort=popular` ranks by distinct completed orders whose order payment status and payment record are both released. Ties use newest harvest/catch, then listing ID. `sort=nearest&latitude=6.12&longitude=125.17` ranks using the public one-decimal supplier coordinates, then popularity and the same tie-breakers. Both finite coordinates are required for nearest and forbidden for other sorts; latitude bounds are -90..90 and longitude -180..180. Ranking precedes pagination and preserves role visibility and filters. Omitting sort retains the existing newest-first API default; the storefront explicitly requests popular.
+
+No DTO or schema migration changes. Browser coordinates are rounded to two decimals, held in workspace memory, and never written to account profiles, audit events, or the outbox.

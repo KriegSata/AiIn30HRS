@@ -117,3 +117,10 @@ On failure: inspect health and request ID; preserve logs; check database connect
 - Review a concrete deployment plan, implement automated rollout/rollback, then replace the deliberate release blocker and zero-task setting together with the production startup guard.
 
 Prepared configuration must never be reported as deployed, and a passing local test must never be reported as hosted operational evidence.
+
+
+## Location discovery deployment requirement
+
+Browser geolocation requires a secure context (HTTPS on hosted environments; loopback is usable locally) and explicit browser permission. The web response allows geolocation only for the same origin via Permissions-Policy. See [MDN geolocation documentation](https://developer.mozilla.org/en-US/docs/Web/API/Geolocation/getCurrentPosition).
+
+Listing URLs can carry opt-in approximate coordinates. The local Next development logger omits catalog request URLs. Before hosting, configure reverse-proxy, CDN, APM, and access-log systems to omit or redact latitude/longitude query parameters; do not collect these URLs in analytics. Hosted log redaction is a deployment gate and has not been validated in a deployed environment. Nearest ranking currently sorts eligible rows in application memory; measure catalog-scale performance before commercial rollout.

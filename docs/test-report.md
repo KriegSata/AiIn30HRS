@@ -66,3 +66,11 @@ Automated accessibility checks and keyboard assertions are useful evidence, but 
 Follow [the setup guide](../START_HERE.md), use generated demo credentials, and run the commands in [the developer guide](developer-guide.md). Browser and load scenarios create synthetic records and belong in a disposable demo environment. Reports must never contain passwords or tokens.
 
 The Principal approved the **local MVP demo, including the sourcing redesign**, after the ten-scenario browser pass, final build, and acceptance review on 5 November 2026. **Commercial release is not approved**, and production startup is explicitly disabled. See [security findings](security-report.md), [security checklist](security-checklist.md), and [delivery status](delivery-status.md) for the remaining gates.
+
+## 6 November 2026 — location discovery validation
+
+`npm run test:compiled`: **36/36 passed**, including six new discovery integration tests and eleven database tests. `npm run test:coverage:compiled`: **25/25 API tests passed**, with **99.30% statements/lines, 89.17% branches, and 97.84% functions** across the configured core modules (database adapter and process entrypoint excluded). `npm run typecheck`, `npm run check:contracts` (38 operations, 40 schemas), and `npm run build` passed.
+
+The initial focused six-scenario browser run passed; [focused report](../artifacts/qa-discovery-e2e-report.json). A subsequent combined suite adds cancellation/signout coverage and reruns existing role, order, offline, and catalog flows. The combined suite completed with **17/17 passing** (7 location scenarios plus 10 existing marketplace scenarios); see [combined browser report](../artifacts/qa-location-integration-e2e-report.json). Browser consent checks use a granted browser geolocation permission with a simulated geographic position; error branches use controlled browser stubs. This is not a physical-device GPS field test.
+
+After acceptance, six synthetic QA listings were paused through the supplier API to keep the demo catalog clean; transaction and audit history were retained.

@@ -47,3 +47,10 @@ Your console shows assigned shipments. Record temperatures with the measurement 
 ## Supply agreements and analytics
 
 Supply agreements in this release are draft intentions. They do not automatically create future orders or constitute executed contracts. Dashboards use recorded activity. Forecasts show insufficient data until a basic trailing average can be supported; they are not guarantees of future demand.
+
+
+## Find nearby suppliers
+
+On the buyer home screen, choose **Enable location** and allow the browser request to put nearby suppliers first. This is optional. Choose **Not now**, or leave permission blocked, to browse **Most popular** instead. Popularity counts completed purchases with released payments; products with equal purchase counts use harvest/catch recency.
+
+Your approximate location is used for this visit only. Choose **Use popular products** to clear it; reloading or signing out also clears it. Location is not continuously tracked. Nearby means approximate supplier proximity, not a delivery promise or driving distance. Category, supplier-location filters, and manual sorting remain available. If permission is blocked, change the site's location permission in your browser settings before trying again.
